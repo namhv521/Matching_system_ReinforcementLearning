@@ -1,80 +1,36 @@
-# Susois — AI/ML Learning Repository
+# Susois
 
-> Personal repository for self-learning AI, Machine Learning, Deep Learning, and building systems from scratch.
+Đây là repo cá nhân — nơi tôi ghi lại hành trình tự học AI, Machine Learning, Deep Learning và xây dựng hệ thống từ đầu.
 
----
-
-## 👤 About
-
-This is my personal learning space. Everything here — notes, code, experiments, mini-projects — is built as I go deeper into AI/ML/DL and related fields.
+Mọi thứ ở đây đều được cập nhật dần theo quá trình học thật sự của tôi.
 
 ---
 
-## 📂 Structure
+## 🧠 Những gì tôi đang học
+
+- **Python** — nền tảng, OOP, xử lý dữ liệu
+- **DSA** — cấu trúc dữ liệu & giải thuật bằng Python
+- **Data Science** — pandas, numpy, visualization
+- **Machine Learning** — classical ML, supervised & unsupervised
+- **Deep Learning** — neural networks, optimization, backprop
+- **Computer Vision** — CNN, object detection, image processing
+- **LLM / NLP** — transformers, fine-tuning, prompt engineering
+
+---
+
+## 📂 Cấu trúc repo
 
 ```
 susois/
-├── AI_ML_andDataScienceTutorial/   # AI, ML, Data Science notes & tutorials
-│   └── Learning Python/            # Python fundamentals
-├── DSApython/                      # Data Structures & Algorithms in Python
-├── main.py                         # Entry point / scratchpad
-├── pyproject.toml                  # Project config
-├── .env                            # Environment variables (not committed)
+├── AI_ML_andDataScienceTutorial/   # AI, ML, Data Science
+│   └── Learning Python/            # Python cơ bản
+├── DSApython/                      # DSA bằng Python
 └── README.md
 ```
 
 ---
 
-## 🧠 Topics Covered
+## 📌 Ghi chú
 
-- **Python** — fundamentals, OOP, data structures
-- **DSA** — algorithms, complexity, problem solving
-- **Data Science** — pandas, numpy, visualization
-- **Machine Learning** — supervised, unsupervised, classical ML
-- **Deep Learning** — neural networks, backprop, optimization
-- **Computer Vision** — CNNs, object detection, image processing
-- **LLM / NLP** — transformers, fine-tuning, prompt engineering
-- **System Building** — end-to-end pipelines, deployment basics
-
----
-
-## 🛠 Tech Stack
-
-- Python 3.12+
-- uv (package manager)
-- PyTorch / TensorFlow *(to be added)*
-- scikit-learn, pandas, numpy *(to be added)*
-- OpenCV, HuggingFace Transformers *(to be added)*
-
----
-
-## 🚀 Getting Started
-
-```bash
-# Clone the repo
-git clone https://github.com/<your-username>/susois.git
-cd susois
-
-# Create virtual environment (using uv)
-uv venv
-.venv\Scripts\activate   # Windows
-
-# Install dependencies
-uv sync
-
-# Copy env file
-copy .env.example .env
-```
-
----
-
-## 📌 Notes
-
-- This repo is a living document — content will be added and updated continuously.
-- `.env` is excluded from version control. Use `.env.example` as a template.
-
----
-
-## 📄 License
-
-MIT — feel free to use anything here for your own learning.
+Repo này là nơi học, thử nghiệm và lưu lại quá trình — không phải sản phẩm hoàn chỉnh.  
+Nội dung sẽ được bổ sung liên tục.
