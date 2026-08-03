@@ -1,0 +1,53 @@
+# ── Environment ─────────────────────────────────────────────
+.env
+*.env
+!.env.example
+
+# ── Python ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual environments ─────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Data & Cache ────────────────────────────────────────────
+data/cache/
+data/models/
+*.h5
+*.pkl
+*.pt
+*.pth
+*.onnx
+*.bin
+
+# ── Logs ────────────────────────────────────────────────────
+logs/
+*.log
+mlruns/
+wandb/
+
+# ── Jupyter ──────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── IDE ──────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── uv ───────────────────────────────────────────────────────
+uv.lock
