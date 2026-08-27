@@ -45,8 +45,9 @@ Thumbs.db
 
 *.docx
 clean_data/
-data/
 outputs/
 tests/
 backend/
 frontend/
+
+data/1.pdfs

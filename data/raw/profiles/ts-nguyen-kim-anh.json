@@ -1,0 +1,60 @@
+{
+  "slug": "ts-nguyen-kim-anh",
+  "name": "Nguyễn Kim Anh",
+  "title": "TS",
+  "profile_url": "https://fit.neu.edu.vn/lecturer/ts-nguyen-kim-anh",
+  "department": "Khoa Công nghệ thông tin",
+  "email": "anhnk.tg@neu.edu.vn",
+  "phone": "0948941899",
+  "bio_raw": "Giảng viên - Cán bộ\nNghiên cứu viên chính tại Viện Các khoa học Trái đất, trực thuộc Viện Hàn lâm Khoa học và Công nghệ Việt Nam (Institute of Earth Sciences, VAST).\nGiảng viên\nLiên chi đoàn\nTin tức\nEdtech Lab\nChuyên đề/Khoá luận\nDanh sách cựu sinh viên\nTuyển dụng\nSự kiện\nBản quyền thuộc về\nKhoa Công nghệ Thông tin\nTrang chủ\nScoreUp\nSmartDoc",
+  "education_raw": [
+    "2017 - 2022: Sau tiến sĩ, Trung tâm nghiên cứu không gian và viễn thám, Đại học Quốc lập Trung ương Đài Loan",
+    "2014 - 2017 Tiến sĩ Khoa học Trái đất, Đại học Quốc lập Trung ương Đài Loan",
+    "2009 - 2011: Thạc sĩ Bản đồ, Viễn thám và Hệ thông tin địa lý, Đại học Khoa học Tự nhiên – ĐHQG Hà Nội",
+    "2002 - 2007: Kỹ sư Trắc địa, Đại học Mỏ – Địa chất Hà Nội"
+  ],
+  "work_history_raw": [
+    "Từ 2008–9/2025: Nghiên cứu viên chính tại Viện Các khoa học Trái đất, Viện Hàn lâm Khoa học và Công nghệ Việt Nam"
+  ],
+  "teaching_raw": [
+    "Bản đồ số",
+    "Xử lý ảnh",
+    "Cơ sở lập trình",
+    "Viễn thám cơ bản",
+    "Viễn thám ứng dụng",
+    "Hệ thống thông tin địa lý (GIS)",
+    "Ứng dụng học máy trong khoa học trái đất và môi trường"
+  ],
+  "research_areas_raw": [
+    "Viễn thám, GIS, bản đồ số",
+    "Ứng dụng viễn thám trong nghiên cứu môi trường"
+  ],
+  "publications_raw": [
+    "Rehman, A. U., Raziq, A., Shrestha, B., Nguyen, K. A., & Liou, Y.-A.*, 2025. The role of spectro-temporal remote sensing in vegetation classification: A comprehensive review integrating machine learning and bibliometric analysis. Computers and Electronics in Agriculture, Vol. 234,110184. https://doi.org/10.1016/j.compag.2025.110184. (SCI, IF = 7.700, RF = 2/89, Agriculture, Multidisciplinary)",
+    "Bera, S., Talukdar, S., Nguyen, K. A., Liou, Y. A.*, Guru, B., Chatterjee, R., & Ramana, G. V., 2025. Enhancing Evacuation Shelter Suitability in Compound Hazard-Prone Regions with a Bayesian Optimized Convolutional Neural Network Approach. International Journal of Disaster Risk Reduction, Vol. 119, 105306. https://doi.org/10.1016/j.ijdrr.2025.105306. (SCI, IF = 4.200, RF = 34/254, Geosciences, Multidisciplinary)",
+    "Liou, Y.-A *., Nguyen, Q.-V., Nguyen, K.-A., & Vo, T.-H. (2024). Human-Greenspace Interactions with Outdoor Air: Landscape Metric and PLS-SEM Approach. Journal of Cleaner Production. Submitted on Oct 23, 2023; Accepted on July 1, 2024. (SCI, IF = 9.7, RF=7/81, ENGINEERING, ENVIRONMENTAL).",
+    "Nguyen, K.A. and Y.-A. Liou*, 2024. Rethinking Our World: A Perspective on a Cleaner Globe Emerging from Reduced Anthropogenic Activities, Geoscience Letters. Submitted on Sept. 25, accepted on February 5, 2024.",
+    "Y.-A. Liou*, Tran, D. P, & Nguyen, K.A., 2024. Spatio-temporal patterns and driving forces of surface urban heat island in Taiwan. Urban Climate",
+    "Q.-V. Nguyen, Y.-A. Liou*, K.-A. Nguyen, D.-P. Tran, 2023: Participation of soil erosion modeling in land use adjustment for mountainous watershed management in Taiwan. Ecological Indicators, Volume 155, November 2023, 110993.",
+    "Liou, Y.A.*, T.-H. Vo, K.A. Nguyen. and J.P. Terry, 2023: Air quality improvement following COVID-19 lockdown measures and projected benefits for environmental health. Remote Sens. 2023, 15, 530.",
+    "P. Tarolli, J Luo, E Straffelini, Liou, Y.A., KA Nguyen, R Laurenti, R Masin, V. D’Agostino, 2023. Saltwater intrusion and climate change impact on coastal agriculture. PLOS Water.",
+    "Nguyen, K.A., Liou, Y.-A.*, H.-P. Tran, P.-P. Hoang &  T.-H. Nguyen, 2022. Reply to “Comment on ‘Soil salinity assessment by using near-infrared channel and Vegetation Soil Salinity Index derived from Landsat 8 OLI data: a case study in the Tra Vinh Province, Mekong Delta, Vietnam’ by Kim-Anh Nguyen, Yuei-An Liou, Ha-Phuong Tran, Phi-Phung Hoang and Thanh-Hung Nguyen”. Progress in Earth and Planetary Science, 2022 9:46;",
+    "Shahfahad, S. Talukdar, R. Ali, K.-A. Nguyen, M. W. Naikoo, Y.-A. Liou*, A. R. M. T. Islam, J. Mallick, and A. Rahman, 2022. Modeling Drought Pattern in a Semi-arid Region of the Western Part of India. Environmental Monitoring and Assessment",
+    "Terry JP, Lau AA, Nguyen, K.-A, Liou, Y.-A and Switzer AD, 2021. Clustered, Stacked and Imbricated Large Coastal Rock Clasts on Ludao Island, Southeast Taiwan, and Their Application to Palaeotyphoon Intensity Assessment. Frontiers in Earth Science.",
+    "Nguyen, K.-A, Liou, Y.-A.*, T.-H. Vo, D.C. Dao, H.S. Nguyen, 2021. Evaluation of urban greenspace vulnerability to typhoon in Taiwan. Urban Forestry & Urban Greening, Volume 63, August 2021, 127191,",
+    "Liou, Y.-A., Nguyen, K.-A*, Ho, L.-T., 2021. Altering urban greenspace patterns and heat stress risk in Hanoi city during Master Plan 2030 implementation. Land Use Policy 105 (2021) 105405.",
+    "Tran, A.T., Nguyen, K.-A., Liou, Y.-A.*, Le, M.H., Vu, V.T., Nguyen, D.D. Nguyen. 2021. Classification and Observed Seasonal Phenology of Broadleaf Deciduous Forests in a Tropical Region by Using Multitemporal Sentinel-1A and Landsat 8 Data. Forests 2021, 12(2), 235",
+    "Nguyen, K.A., Y-A. Liou*, P.H. Tran, P.P. Hoang, and H.T. Nguyen, 2020: Soil salinity assessment by using an indicator derived from Landsat 8 OLI data: A case study in the Tra Vinh Province, Mekong Delta, Vietnam, Progress in Earth and Planetary Science",
+    "Nguyen, K.A, Y.-A. Liou* and J. Terry. 2019. Vulnerability of Vietnam to typhoons: A spatial assessment based on hazards, exposure and adaptive capacity. Science of the Total Environment (SCI, IF= 6.551, RF= 22/265, Environmental Sciences). Volume 682, 10 September 2019, Pages 31-46",
+    "YA Liou, JC Liu, CC Liu, CH Chen, K.A Nguyen, JP Terry. Consecutive Dual-Vortex Interactions between Quadruple Typhoons Noru, Kulap, Nesat and Haitang during the 2017 North Pacific Typhoon Season. Remote Sensing",
+    "Nguyen, K.A, Y.-A. Liou* 2019. Mapping global eco-environment vulnerability due to human and nature disturbances. MethodsX. Vol. 6, Pp: 862-875 doi.org/10.1016/j.mex.2019.03.023.",
+    "Nguyen, K.A, Y.-A. Liou*, 2019. Global mapping of eco-environmental vulnerability from human and nature disturbances. Science of the Total Env",
+    "SÁCH ĐÃ XUẤT BẢN:",
+    "Earth observations for environmental sustainability for the next decade. Remote sensing 2021.",
+    "Nguyen, K-A, Liou, Y.-A. 2020. Eco-environmental vulnerability assessment at regional and global scales. Publishing House for Science and Technology, ISBN: 978-604-9955-01-3.",
+    "Dao, D. C., Nguyen, H. S., and Nguyen, K.-A. Assessment of vulnerability due to impacts of climate change in central coastal area of Vietnam and suggestion for sustainable living model. Publishing House for Science and Technology. ISBN: 978-604-995-03-7. 5/2020.",
+    "Địa chỉ liên hệ 02436.280.280 (6323) kcntt@neu.edu.vn",
+    "Thông tin"
+  ],
+  "crawled_at": "2026-08-20T15:03:44.456597"
+}

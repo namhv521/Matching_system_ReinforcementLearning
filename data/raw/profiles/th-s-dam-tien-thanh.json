@@ -1,0 +1,34 @@
+{
+  "slug": "th-s-dam-tien-thanh",
+  "name": "Đàm Tiến Thành",
+  "title": "ThS",
+  "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-dam-tien-thanh",
+  "department": "Khoa Công nghệ thông tin",
+  "email": "thanhtd@neu.edu.vn",
+  "phone": "(+84)2436280280",
+  "bio_raw": "Giảng viên - Cán bộ\nThành viên nhóm nghiên cứu DataOptLab, Khoa Khoa học dữ liệu và Trí tuệ nhân tạo, Trường Công nghệ, Trường Đại học kinh tế Quốc dân.\nTốt nghiệp Đại học loại Giỏi tại trường Đại học Công nghệ - ĐHQGHN, (Năm 2020)\nTốt nghiệp Thạc sĩ tại trường Đại học Phenikaa, (Năm 2023)\nGiảng viên\nLiên chi đoàn\nTin tức\nEdtech Lab\nChuyên đề/Khoá luận\nDanh sách cựu sinh viên\nTuyển dụng\nSự kiện\nBản quyền thuộc về\nKhoa Công nghệ Thông tin\nTrang chủ\nScoreUp\nSmartDoc",
+  "education_raw": [],
+  "work_history_raw": [],
+  "teaching_raw": [
+    "Cơ sở lập trình",
+    "Toán rời rạc",
+    "Cấu trúc dữ liệu và giải thuật"
+  ],
+  "research_areas_raw": [
+    "Optimizations",
+    "Operations Research",
+    "Convex optimization",
+    "Stochastic programming",
+    "Choice probability problems",
+    "GIẢI THƯỞNG",
+    "Giải nhất cuộc thi tối ưu hóa về sử dụng điện năng “Power Laws: Optimizing Demand-side Strategies” được tổ chức bởi DrivenData năm 2018",
+    "Giải nhì của giải thưởng “Sinh viên nghiên cứu khoa hoc” năm 2020 do Bộ Giáo dục và Đào tạo tổ chức"
+  ],
+  "publications_raw": [
+    "Tạp chí ISI [1] Tien Thanh Dam, Thuy Anh Ta, Tien Mai. Submodularity and Local Search Approaches for Maximum Capture Problems under Generalized Extreme Value Models. European Journal of Operational Research 300(3): 953-965, 2022. [2] Tien Thanh Dam, Thuy Anh Ta, Tien Mai. Joint chance-constrained staffing optimization in multi-skill call centers. Journal of Combinatorial Optimization 1-25, 2022 [3] Tien Thanh Dam, Thuy Anh Ta, Tien Mai.Robust Maximum Capture Facility Location under Random Utility Maximization Models. European Journal of Operational Research 310(3): 1128-1150, 2023. [4] Ngan Ha Duong, Tien Thanh Dam, Thuy Anh Ta, Tien Mai. Joint Location and Cost Planning in Maximum Capture Facility Location under Mutiplicative Random Utility Maximization. Computer & Operations Research 159, 106336, 2023",
+    "Bài Hội thảo [1] Tien Thanh Dam, Duy Thinh Nguyen, Quoc Trung Bui, Trung Kien Do. On the Traveling Salesman Problem with Hierarchical Objective Function. 2019 11th International Conference on Knowledge and Systems Engineering (KSE), 2019. [2] Tien Thanh Dam, Thuy Anh Ta. Distributionally Robust fractional 0-1 Programming. 2022 14th International Conference on Knowledge and Systems Engineering (KSE), 2022.",
+    "Địa chỉ liên hệ 02436.280.280 (6323) kcntt@neu.edu.vn",
+    "Thông tin"
+  ],
+  "crawled_at": "2026-08-20T15:01:53.708523"
+}

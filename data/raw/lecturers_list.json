@@ -1,0 +1,254 @@
+[
+  {
+    "slug": "ts-pham-xuan-lam",
+    "name": "Pham Xuan Lam",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-pham-xuan-lam",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-luu-minh-tuan",
+    "name": "Luu Minh Tuan",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-luu-minh-tuan",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "cn-nguyen-huong-giang",
+    "name": "Nguyen Huong Giang",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/cn-nguyen-huong-giang",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-nguyen-trung-tuan",
+    "name": "Nguyen Trung Tuan",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-nguyen-trung-tuan",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-pham-thao",
+    "name": "Pham Thao",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-pham-thao",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-tong-thi-hao-tam",
+    "name": "Tong Thi Hao Tam",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-tong-thi-hao-tam",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-cao-thi-thu-huong",
+    "name": "Cao Thi Thu Huong",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-cao-thi-thu-huong",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-tran-thi-my-diep",
+    "name": "Tran Thi My Diep",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-tran-thi-my-diep",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-tong-thi-minh-ngoc",
+    "name": "Tong Thi Minh Ngoc",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-tong-thi-minh-ngoc",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-nguyen-thanh-huong",
+    "name": "Nguyen Thanh Huong",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-nguyen-thanh-huong",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-nguyen-ngoc-tuan",
+    "name": "Nguyen Ngoc Tuan",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-nguyen-ngoc-tuan",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-pham-minh-hoan",
+    "name": "Pham Minh Hoan",
+    "title": "",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-pham-minh-hoan",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-tran-hung",
+    "name": "Trần Hùng",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-tran-hung",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-luong-van-thien",
+    "name": "Lương Văn Thiện",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-luong-van-thien",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-ngo-thai-hoa",
+    "name": "Ngô Thái Hòa",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-ngo-thai-hoa",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "pgs-ts-ha-minh-hoang",
+    "name": "Ts Hà Minh Hoàng",
+    "title": "PGS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/pgs-ts-ha-minh-hoang",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-dam-tien-thanh",
+    "name": "Đàm Tiến Thành",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-dam-tien-thanh",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-nguyen-thanh-hoang",
+    "name": "Nguyễn Thanh Hoàng",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-nguyen-thanh-hoang",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-pham-tuan-anh",
+    "name": "Phạm Tuấn Anh",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-pham-tuan-anh",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ths-le-duy-khanh",
+    "name": "Lê Duy Khánh",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ths-le-duy-khanh",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ths-tran-quang-toan",
+    "name": "Trần Quang Toàn",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ths-tran-quang-toan",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-nguyen-thi-kim-ngan",
+    "name": "Nguyễn Thị Kim Ngân",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-nguyen-thi-kim-ngan",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-nguyen-thi-minh-trang",
+    "name": "Nguyễn Thị Minh Trang",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-nguyen-thi-minh-trang",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-do-van-sang",
+    "name": "Đỗ Văn Sang",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-do-van-sang",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-vu-duc-minh",
+    "name": "Vũ Đức Minh",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-vu-duc-minh",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-dang-tuan-anh",
+    "name": "Đặng Tuấn Anh",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-dang-tuan-anh",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ths-nguyen-trung-kien",
+    "name": "Nguyễn Trung Kiên",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ths-nguyen-trung-kien",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-nguyen-kim-anh",
+    "name": "Nguyễn Kim Anh",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-nguyen-kim-anh",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ths-ngo-duc-nghi",
+    "name": "Ngô Đức Nghị",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ths-ngo-duc-nghi",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-le-thi-hoai-thu",
+    "name": "Lê Thị Hoài Thu",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-le-thi-hoai-thu",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-nguyen-quynh-mai",
+    "name": "Nguyễn Quỳnh Mai",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-nguyen-quynh-mai",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "ts-dang-minh-quan",
+    "name": "Đặng Minh Quân",
+    "title": "TS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ts-dang-minh-quan",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-pham-duc-trung",
+    "name": "Phạm Đức Trung",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-pham-duc-trung",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "th-s-nguyen-quoc-thai",
+    "name": "Nguyễn Quốc Thái",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-nguyen-quoc-thai",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "lecturer-1",
+    "name": "Nguyễn Hùng Thắng",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/lecturer-1",
+    "department": "Khoa Công nghệ thông tin"
+  },
+  {
+    "slug": "lecturer",
+    "name": "Nguyễn Hùng Việt",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/lecturer",
+    "department": "Khoa Công nghệ thông tin"
+  }
+]

@@ -1,0 +1,52 @@
+{
+  "slug": "ts-nguyen-ngoc-tuan",
+  "name": "Nguyen Ngoc Tuan",
+  "title": "",
+  "profile_url": "https://fit.neu.edu.vn/lecturer/ts-nguyen-ngoc-tuan",
+  "department": "Khoa Công nghệ thông tin",
+  "email": "tuannn@neu.edu.vn",
+  "phone": "0949877168",
+  "bio_raw": "Giảng viên - Cán bộ\nGiảng viên\nLiên chi đoàn\nTin tức\nEdtech Lab\nChuyên đề/Khoá luận\nDanh sách cựu sinh viên\nTuyển dụng\nSự kiện\nBản quyền thuộc về\nKhoa Công nghệ Thông tin\nTrang chủ\nScoreUp\nSmartDoc",
+  "education_raw": [
+    "2014 - 2021: Tiến sỹ Kỹ thuật phần mềm, Đại học Bách khoa Hà Nội.",
+    "2008 - 2010: Thạc sỹ Công nghệ thông tin doanh nghiệp (Business Information Technology), Đại học Twente, TP. Enschede, Hà Lan.",
+    "2001 - 2006: Kỹ sư Công nghệ thông tin, Đại học Bách khoa Hà Nội.",
+    "09/2021 - 06/2024: Giảng viên thỉnh giảng, Khoa Khoa học máy tính, Trường Công nghệ thông tin và truyền thông, Đại học Bách khoa Hà Nội."
+  ],
+  "work_history_raw": [],
+  "teaching_raw": [
+    "Phân tích và thiết kế hệ thống (System Analysis and Design)",
+    "Phân tích nghiệp vụ (Business Analytics)",
+    "Nhập môn công nghệ thông tin (Foundations of IT)",
+    "Lập trình hướng đối tượng (Object Oriented Programing)",
+    "Thiết kế web tương tác (Interactive Web Design)",
+    "ResearchGate",
+    "Google Scholar."
+  ],
+  "research_areas_raw": [
+    "Quản lý dự án",
+    "Các phương pháp tiên tiến lập lịch dự án phần mềm",
+    "Kinh tế công nghệ phần mềm",
+    "Kinh tế số"
+  ],
+  "publications_raw": [
+    "Nguyen Ngoc Tuan, Tran Thi Bich Ngoc (2024), \"Examining the relationship between digital transformation, artificial intelligence, and productivity in the context of recent AI advancements\", Kỷ yếu Hội thảo quốc gia lần thứ XXVII một số vấn đề chọn lọc về CNTT-TT - VNICT 2024, trang 196-203, NXB Khoa học và Kỹ thuật.",
+    "Trần Thị Bích Ngọc, Nguyễn Ngọc Tuấn (2023), “Hàm ý phát triển kinh tế số Việt Nam từ chỉ số Network Readiness Index (NRI)”, Kỷ yếu Hội thảo khoa học quốc gia \"Thực trạng kinh tế số và các giải pháp phát triển kinh tế số thành phố Hà Nội cho đến năm 2030\", trang 86-97, Nhà xuất bản Tài chính.",
+    "Dac-Nhuong Le, Gia-Nhu Nguyen, Bao-Ngoc Trinh, Ngoc-Tuan Nguyen, Quyet-Thang Huynh, Suresh Satapathy (2021), “MMAS Algorithm and Nash Equilibrium to Solve Multi-round Procurement Problem”, International Conference on Emerging Trends and Advances in Electrical Engineering and Renewable Energy (ETAEERE 2020), 5-6 March 2020. Advances in Systems, Control and Automations, Lecture Notes in Electrical Engineering, Vol. 708, pp. 273-284, Springer. DOI: 10.1007/978-981-15-8685-9_28. (Scopus)",
+    "Dac-Nhuong Le, Gia Nhu Nguyen, Garg Harish, Quyet Thang Huynh, Ngoc-Tuan Nguyen, Bao Ngoc Trinh (2021), “Optimizing Bidders Selection in Multi-Round Procurement of Software Project Scheduling Using Parallel Max-Min Ant System Algorithm with Nash Equilibrium and Game Theory”, CMC-Computers, Materials & Continua, vol. 66(1), pp. 993-1010. Tech Science Press, DOI: 10.32604/cmc.2020.012464. (SCIE)",
+    "Quyet-Thang Huynh, Ngoc-Tuan Nguyen (2020), “Probabilistic Method for Managing Common Risks in Software Project Scheduling Based on Program Evaluation Review Technique”, International Journal of Information Technology Project Management, Volume 11(3), pp. 77-94, ISSN: 1938-0232, DOI: 10.4018/ IJITPM.2020070105. (ESCI, Scopus)",
+    "Ngoc-Tuan Nguyen, Quyet-Thang Huynh, Thi-Huong-Giang Vu (2018), “A Bayesian Critical Path Method for Managing Common Risks in Software Project Scheduling”, SoICT 2018 Proceedings of the 9",
+    "International Symposium on Information and Communication Technology, Danang City, Viet Nam - December 06 - 07, 2018, ISBN: 978-1-4503-6539-0, pp. 382-388, DOI: 10.1145/3287921.3287962",
+    "Nguyen Ngoc Tuan, Huynh Quyet Thang (2018), “Risk management in Agile software project iteration scheduling using Bayesian Networks”, New Trends in Intelligent Software Methodologies, Tools and Techniques, Volume 303, 2018, pp. 596 - 606 (SOMET 2018), ISBN 978-1-61499-899-0, DOI: 10.3233/978-1-61499-900-3-596, SCOPUS Indexed.",
+    "Nguyễn Ngọc Tuấn, Trần Trung Hiếu, Huỳnh Quyết Thắng (2017), “Phương pháp xác suất cải tiến sử dụng mạng bayes đánh giá rủi ro trong lập lịch dự án phần mềm”, Chuyên san Công nghệ thông tin và Truyền thông, Tạp chí Khoa học và Kỹ thuật - Học viện KTQS - Số 184 (06-2017), trang 45-61, ISSN: 1859-0209",
+    "Nguyễn Ngọc Tuấn, Võ Thị Hường, Huỳnh Quyết Thắng (2017), “Hướng tới mô hình mạng Bayes để đánh giá rủi ro trong lập lịch dự án phần mềm”, Kỷ yếu Hội nghị Quốc gia lần thứ X về Nghiên cứu cơ bản và ứng dụng Công nghệ thông tin (FAIR’10) – Đà Nẵng, ngày 17-18/8/2017, trang 275-282, ISBN: 978-604-913-614-6",
+    "Nguyễn Ngọc Tuấn, Huỳnh Quyết Thắng (2017), “Iteration scheduling using Bayesian networks in Agile Software Development”, Kỷ yếu Hội nghị Quốc gia lần thứ X về Nghiên cứu cơ bản và ứng dụng Công nghệ thông tin (FAIR’10) – Đà Nẵng, ngày 17-18/8/2017, trang 300-308, ISBN: 978-604-913-614-6",
+    "Zornitza Bakalova, Maya Daneva, Tuan Nguyen (2014), “Standards Compliance Helps Value Creation in Agile Projects”, IEEE 8",
+    "International Conference on Research Challenges in Information Science (RCIS 2014), pp. 1-6, ISBN:978-1-4799-2393-9",
+    "Nguyen Ngoc Tuan and Huynh Quyet Thang (2013), “Combining Maturity and Agility – Lessons Learnt From A Case Study”, SoICT 2013 Proceedings of the 4",
+    "International Symposium on ICT, pp. 267-274",
+    "Địa chỉ liên hệ 02436.280.280 (6323) kcntt@neu.edu.vn",
+    "Thông tin"
+  ],
+  "crawled_at": "2026-08-20T15:00:54.877239"
+}

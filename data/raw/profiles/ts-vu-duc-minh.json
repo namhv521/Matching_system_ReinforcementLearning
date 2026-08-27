@@ -1,0 +1,38 @@
+{
+  "slug": "ts-vu-duc-minh",
+  "name": "Vũ Đức Minh",
+  "title": "TS",
+  "profile_url": "https://fit.neu.edu.vn/lecturer/ts-vu-duc-minh",
+  "department": "Khoa Công nghệ thông tin",
+  "email": "minhvd@neu.edu.vn",
+  "phone": "0814844142",
+  "bio_raw": "Giảng viên - Cán bộ\nTốt nghiệp tiến sĩ tại trường Đại học Montreal, Canada\nĐã học tập và làm việc tại: Mỹ, Canada, Anh, Pháp\nGiảng viên\nLiên chi đoàn\nTin tức\nEdtech Lab\nChuyên đề/Khoá luận\nDanh sách cựu sinh viên\nTuyển dụng\nSự kiện\nBản quyền thuộc về\nKhoa Công nghệ Thông tin\nTrang chủ\nScoreUp\nSmartDoc",
+  "education_raw": [],
+  "work_history_raw": [],
+  "teaching_raw": [
+    "Cấu trúc dữ liệu và giải thuật",
+    "Quản lý hệ thống cơ sở dữ liệu",
+    "Github",
+    "Lập trình phân tích dữ liệu với Python",
+    "Vận trù học",
+    "Thuật toán",
+    "Lập trình thi đấu"
+  ],
+  "research_areas_raw": [
+    "Phát triển các mô hình và phương pháp giải quyết các bài toán tối ưu hóa trong lĩnh vực vận tải và hậu cần, viễn thông, lập kế hoạch, học máy,…",
+    "GIẢI THƯỞNG",
+    "Best paper award tại hội thảo Csonet 2023",
+    "Giải thưởng “SIG Freigh Outstanding paper” của Informs"
+  ],
+  "publications_raw": [
+    "[1]",
+    "DM Vu , Y Kergosien, JE Mendoza, P Desport. Branch-and-check approaches for the tourist trip design problem with rich constraints. Computers & Operations Research 138, 105566, 16, 2022 [2]",
+    "DM Vu , M Hewitt, DD Vu. Solving the time dependent minimum tour duration and delivery man problems with dynamic discretization discovery. European Journal of Operational Research 302 (3), 831-846 [3] TG Crainic, M Hewitt, M Toulouse, DM Vu. Service network design with resource constraints. Transportation Science 50 (4), 1380-1393,134, 2016 [4]",
+    "DM Vu , M Hewitt, N Boland, M Savelsbergh. Dynamic discretization discovery for solving the time-dependent traveling salesman problem with time windows. Transportation science 54 (3), 703-720, 73, 2020 [5]",
+    "DM Vu , TG Crainic, M Toulouse. A three-phase matheuristic for capacitated multi-commodity fixed-cost network design with design-balance constraints. Journal of heuristics 19, 757-795, 61, 2013 [6] TG Crainic, M Hewitt, M Toulouse,",
+    "DM Vu . Scheduled service network design with resource acquisition and management. EURO Journal on Transportation and Logistics 7, 277-309",
+    "Địa chỉ liên hệ 02436.280.280 (6323) kcntt@neu.edu.vn",
+    "Thông tin"
+  ],
+  "crawled_at": "2026-08-20T15:03:14.854892"
+}

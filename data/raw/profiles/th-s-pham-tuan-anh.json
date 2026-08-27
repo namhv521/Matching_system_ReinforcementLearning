@@ -1,0 +1,52 @@
+{
+  "slug": "th-s-pham-tuan-anh",
+  "name": "Phạm Tuấn Anh",
+  "title": "ThS",
+  "profile_url": "https://fit.neu.edu.vn/lecturer/th-s-pham-tuan-anh",
+  "department": "Khoa Công nghệ thông tin",
+  "email": "ptanh@neu.edu.vn",
+  "phone": "0344350998",
+  "bio_raw": "Giảng viên - Cán bộ\nThành viên nhóm nghiên cứu Công nghệ ứng dụng, Khoa Khoa học dữ liệu và Trí tuệ nhân tạo, Trường Công nghệ, Trường Đại học kinh tế Quốc dân.\nGiảng viên\nLiên chi đoàn\nTin tức\nEdtech Lab\nChuyên đề/Khoá luận\nDanh sách cựu sinh viên\nTuyển dụng\nSự kiện\nBản quyền thuộc về\nKhoa Công nghệ Thông tin\nTrang chủ\nScoreUp\nSmartDoc",
+  "education_raw": [],
+  "work_history_raw": [],
+  "teaching_raw": [
+    "Object-Oriented Programming",
+    "Programming Languages: C++, Python, Java, Go",
+    "Functional Programming Language",
+    "Database Management Systems",
+    "Mobile app Development with Flutter"
+  ],
+  "research_areas_raw": [
+    "Operations Research",
+    "Evolutionary Computation",
+    "Text Summarization Problem"
+  ],
+  "publications_raw": [
+    "Tạp chí ISI [1]. Thibaut Vidal, Rafael Martinelli,",
+    "Tuan Anh Pham , Minh Hoàng Hà: Arc routing with time-dependent travel times and paths. Transportation Science 2021, 55.3:706-724 (",
+    "Q1 - Top 5% [2].",
+    "Tuan Anh Pham , Minh Hoàng Hà, Xuan Hoai Nguyen:",
+    "Solving the multi-vehicle multi-covering tour problem . Computers & Operations Research 2017, 88:258-278 ( [3]. Quang Uy Nguyen,",
+    "Tuan Anh Pham , Xuan Hoai Nguyen, James McDermoot:",
+    "Subtree Semantic Geometric Crossover for Genetic Programming",
+    "Genetic Programming and Evolvable Machines 2016, 17(1):25-53 (",
+    "Hội thảo quốc tế [1].",
+    "Viet-Hong Tran",
+    "Anh-Tuan Pham , Vinh-Van Nguyen,",
+    "Hoai-Xuan Nguyen , Huy-Quang Nguyen:",
+    "Parameter Learning for Statistical Machine Translation Using CMA-ES .KSE2014:425-432 [2].",
+    "Pham Tuan Anh , Quang Uy Nguyen, Xuan Hoai Nguyen, Michael O’Neill:",
+    "Examining the Diversity Property of Semantic Similarity Based Crossover . EuroGP 2013: 265-276 [3].",
+    "Pham Tuan Anh , Quang Uy Nguyen, Xuan Hoai Nguyen:",
+    "Phishing Attacks Detection Using Genetic Programming.",
+    "KSE (2) 2013: 185-195 [4]. Nguyen Quang Uy,",
+    "Pham Tuan Anh , Truong Cong Doan, Nguyen Xuan Hoai:",
+    "A Study on the Use of Genetic Programming for Automatic Text Summarizatio",
+    "KSE 2012 : 93-98",
+    "CÁC ĐỀ TÀI, DỰ ÁN ĐÃ THỰC HIỆN 2022-now: Project Manager: ANFAST - Smart Transportation Routing System, https://anfast.vn 2020-now: Project Manager: Trạm Xanh - Agricultural E-Commerce System, https://tramxanhviet.vn 2017-now: Project Manager: Ubofood - Food E-Commerce System, https://ubofood.com 2016-2017: Researcher/Developer, 123Xe - Car Sharing System, https://123xe.vn 12/2021-5/2022, IT Expert, Project: Smart Destination Tourism Management for Moc Chau district, Son La province Vietnam 2017-2019, Technician, NAFOSTED Project: Developing techniques for solving the vehicle routing problems and their new variants 2015-2017, Technician, NAFOSTED Project: Evolutionary Learning and Optimization: Some Semantic and Statistical Approaches 2014-2016, Technician, NAFOSTED Project: Prediction-based optimization for dynamic transport scheduling 2012-2014, Technician, NAFOSTED Project: Analysis of structural properties of biological networks and applications on identification of disease candidate genes",
+    "GIẢI THƯỞNG 2017 - Giải nhì tuổi trẻ sáng tạo trong quân đội lần thứ 17 2006 - Giải Khuyến khích Olympic tin học sinh viên khối chuyên tin",
+    "Địa chỉ liên hệ 02436.280.280 (6323) kcntt@neu.edu.vn",
+    "Thông tin"
+  ],
+  "crawled_at": "2026-08-20T15:02:14.181595"
+}
