@@ -1,0 +1,60 @@
+================================================================
+DỮ LIỆU (DATA) VÀ THÔNG TIN (INFORMATION)
+================================================================
+
+1. DỮ LIỆU (DATA)
+-----------------
+Dữ liệu là các sự kiện, con số, ký hiệu, hình ảnh, âm thanh...
+được thu thập và lưu trữ nhưng CHƯA qua xử lý hay diễn giải.
+
+Dữ liệu tự thân không mang ý nghĩa rõ ràng.
+
+Ví dụ:
+  - 37, 38.5, 36.9, 40.1         ← chỉ là các con số
+  - "Hanoi", "HCMC", "Danang"    ← chỉ là chuỗi ký tự
+  - 1000101010011...              ← bit nhị phân
+  - một tập ảnh chưa được gán nhãn
+
+
+2. THÔNG TIN (INFORMATION)
+---------------------------
+Thông tin là dữ liệu đã được XỬ LÝ, tổ chức, hoặc diễn giải
+để mang lại ý nghĩa và có thể dùng để ra quyết định.
+
+Thông tin = Dữ liệu + Ngữ cảnh + Xử lý
+
+Ví dụ:
+  - 37, 38.5, 36.9, 40.1  →  "Nhiệt độ cơ thể bệnh nhân trong 4 ngày,
+                               ngày cuối bị sốt cao"
+  - "Hanoi", "HCMC"       →  "Hai thành phố lớn nhất Việt Nam"
+  - ảnh có nhãn "mèo/chó" →  dữ liệu huấn luyện có thể dùng được
+
+
+3. SO SÁNH
+-----------
+┌─────────────────┬──────────────────────────┬──────────────────────────┐
+│                 │ DỮ LIỆU                  │ THÔNG TIN                │
+├─────────────────┼──────────────────────────┼──────────────────────────┤
+│ Bản chất        │ Thô, chưa xử lý          │ Đã xử lý, có ngữ cảnh   │
+│ Ý nghĩa         │ Chưa rõ ràng             │ Có ý nghĩa cụ thể        │
+│ Mục đích        │ Đầu vào                  │ Đầu ra để ra quyết định  │
+│ Phụ thuộc       │ Độc lập                  │ Phụ thuộc vào dữ liệu    │
+│ Ví dụ AI/ML     │ Raw dataset              │ Model output, insights   │
+└─────────────────┴──────────────────────────┴──────────────────────────┘
+
+
+4. TRONG BỐI CẢNH AI / ML
+---------------------------
+- Dữ liệu: raw CSV, ảnh chưa xử lý, log hệ thống, văn bản thô
+- Thông tin: kết quả dự đoán, phân tích xu hướng, báo cáo từ model
+
+Quá trình: Data → Preprocessing → Model → Prediction → Information
+
+Chất lượng thông tin phụ thuộc hoàn toàn vào chất lượng dữ liệu đầu vào.
+"Garbage in, garbage out" — nguyên tắc cốt lõi trong ML.
+
+
+================================================================
+Ghi chú: File này thuộc nhánh MIS (Management Information Systems)
+================================================================
+

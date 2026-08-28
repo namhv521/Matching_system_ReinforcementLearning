@@ -1,0 +1,108 @@
+<map version="1.0.1">
+<node TEXT="CHƯƠNG II&#10;XỬ LÝ DỮ LIỆU CẢM BIẾN">
+
+  <node TEXT="2.1. Cảm biến và cơ cấu chấp hành" POSITION="right">
+    <node TEXT="Định nghĩa">
+      <node TEXT="Sensor: thiết bị quan sát thuộc tính vật lý, chuyển thành thông tin"/>
+      <node TEXT="Actuator: thiết bị thay đổi thuộc tính vật lý theo thông tin nhận được"/>
+    </node>
+    <node TEXT="Đại lượng cần đo">
+      <node TEXT="M: đại lượng cần đo (không có tính chất điện)"/>
+      <node TEXT="S: đại lượng đặc trưng đầu ra (mang tính chất điện), S = F(M)"/>
+    </node>
+    <node TEXT="Một số hiệu ứng chế tạo cảm biến">
+      <node TEXT="Hiệu ứng hỏa điện (đo bức xạ ánh sáng)"/>
+      <node TEXT="Hiệu ứng áp điện (đo lực, áp suất, gia tốc)"/>
+      <node TEXT="Hiệu ứng cảm ứng điện từ (đo tốc độ dịch chuyển)"/>
+      <node TEXT="Hiệu ứng quang điện (chế tạo cảm biến quang)"/>
+      <node TEXT="Hiệu ứng Hall (xác định vị trí vật chuyển động)"/>
+    </node>
+    <node TEXT="Phân loại cảm biến">
+      <node TEXT="Theo nguyên lý chuyển đổi (vật lý, hóa học, sinh học)"/>
+      <node TEXT="Theo dạng kích thích (âm, điện, từ, quang, cơ, nhiệt, bức xạ)"/>
+      <node TEXT="Theo tính năng (độ nhạy, độ chính xác, độ phân giải, độ trễ...)"/>
+      <node TEXT="Theo phạm vi sử dụng (công nghiệp, y tế, nông nghiệp, quân sự...)"/>
+      <node TEXT="Theo mô hình mạch thay thế: cảm biến tích cực / thụ động"/>
+    </node>
+    <node TEXT="Đặc trưng cơ bản">
+      <node TEXT="Hàm truyền (tuyến tính, logarit, hàm mũ...)"/>
+      <node TEXT="Độ lớn tín hiệu vào"/>
+      <node TEXT="Sai số và độ chính xác"/>
+      <node TEXT="Đường cong chuẩn cảm biến"/>
+      <node TEXT="Độ nhạy, độ nhanh, thời gian hồi đáp"/>
+      <node TEXT="Giới hạn sử dụng (vùng danh định, vùng không hư hỏng, vùng không phá hủy)"/>
+    </node>
+    <node TEXT="Các loại cảm biến thông dụng">
+      <node TEXT="Cảm biến nhiệt độ"/>
+      <node TEXT="Cảm biến hồng ngoại"/>
+      <node TEXT="Cảm biến độ ẩm"/>
+      <node TEXT="Cảm biến chuyển động"/>
+      <node TEXT="Cảm biến khí"/>
+      <node TEXT="Cảm biến khói"/>
+      <node TEXT="Cảm biến áp suất"/>
+      <node TEXT="Cảm biến gia tốc"/>
+    </node>
+  </node>
+
+  <node TEXT="2.2. Khuếch đại, lọc và xử lý tín hiệu" POSITION="right">
+    <node TEXT="Khuếch đại">
+      <node TEXT="Tín hiệu cảm biến thường rất yếu (µV, µA)"/>
+      <node TEXT="Op-amp: khuếch đại đa năng (điện áp, dòng điện, tạo bộ lọc)"/>
+    </node>
+    <node TEXT="Lọc nhiễu">
+      <node TEXT="Loại bỏ nhiễu để hệ thống ổn định, chính xác"/>
+      <node TEXT="Chuẩn công nghiệp phổ biến: tín hiệu 4-20mA"/>
+    </node>
+  </node>
+
+  <node TEXT="2.3. Chuyển đổi ADC, DAC" POSITION="right">
+    <node TEXT="ADC (Analog to Digital Converter)">
+      <node TEXT="3 bước: lấy mẫu → lượng tử hóa → mã hóa"/>
+      <node TEXT="Ứng dụng: nông nghiệp thông minh, giám sát môi trường, thiết bị y tế"/>
+    </node>
+    <node TEXT="DAC (Digital to Analog Converter)">
+      <node TEXT="Chuyển dữ liệu số thành tín hiệu analog điều khiển thiết bị vật lý"/>
+      <node TEXT="Ứng dụng: đèn, quạt, loa, y tế, nông nghiệp, ô tô/robot tự hành"/>
+    </node>
+  </node>
+
+  <node TEXT="2.4. Thu thập và xử lý dữ liệu cảm biến" POSITION="right">
+    <node TEXT="Khái niệm">
+      <node TEXT="Tiếp nhận, biến đổi, tổ chức dữ liệu thành thông tin hữu ích"/>
+    </node>
+    <node TEXT="Hậu quả nếu không xử lý dữ liệu">
+      <node TEXT="Thất thoát thông tin"/>
+      <node TEXT="Khó khăn quản lý"/>
+      <node TEXT="Khó khăn phân tích"/>
+      <node TEXT="Sai sót cao"/>
+      <node TEXT="Sử dụng tài nguyên không hiệu quả"/>
+      <node TEXT="Thiếu thông báo, giao tiếp"/>
+      <node TEXT="Mất cơ hội tối ưu hóa"/>
+    </node>
+    <node TEXT="Quá trình xử lý dữ liệu (6 bước)">
+      <node TEXT="1. Thu thập dữ liệu"/>
+      <node TEXT="2. Lọc dữ liệu"/>
+      <node TEXT="3. Biến đổi dữ liệu"/>
+      <node TEXT="4. Tổ chức và lưu trữ"/>
+      <node TEXT="5. Phân tích dữ liệu"/>
+      <node TEXT="6. Trình bày kết quả"/>
+    </node>
+  </node>
+
+  <node TEXT="2.5. Các giải thuật xử lý dữ liệu" POSITION="right">
+    <node TEXT="Tiền xử lý dữ liệu cảm biến">
+      <node TEXT="Lọc nhiễu (Noise Filtering)"/>
+      <node TEXT="Chuẩn hóa dữ liệu (Normalization)"/>
+      <node TEXT="Xử lý dữ liệu thiếu (nội suy, giá trị trung bình, PMF)"/>
+      <node TEXT="Phát hiện dữ liệu ngoại lệ (Outlier Detection)"/>
+    </node>
+    <node TEXT="Phân tích dữ liệu cảm biến">
+      <node TEXT="Học máy (Decision Tree, Random Forest...)"/>
+      <node TEXT="Học sâu (CNN, RNN)"/>
+      <node TEXT="Phân tích thống kê và chuỗi thời gian"/>
+      <node TEXT="Xử lý dữ liệu tại biên (Edge Analytics)"/>
+    </node>
+  </node>
+
+</node>
+</map>
