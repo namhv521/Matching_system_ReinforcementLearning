@@ -1,0 +1,58 @@
+HUONG DAN CAC BUOC TIEP THEO
+================================
+
+Muc tieu
+--------
+Hoan thien he thong phan bo sinh vien - giang vien huong dan bang PPO, sau do so sanh voi DQN va cac baseline truyen thong.
+
+Trang thai hien tai
+-------------------
+- Du lieu da co pipeline trich xuat va cleaning deterministic.
+- Du lieu RL sach duoc tao local trong thu muc data/cleaned.
+- Environment matching da co quota, fairness reward va compatibility TF-IDF.
+- PPO MaskablePPO, DQN, Random va Greedy da co benchmark smoke test.
+- Toan bo data va output local se khong duoc day len GitHub.
+
+Thu tu nen lam
+--------------
+1. Kiem tra du lieu local
+   Xac nhan data/processed va data/cleaned ton tai, khong co API key hoac thong tin nhay cam trong file se dung cho thi nghiem.
+
+2. Bo sung va audit du lieu
+   Thu thap them thesis cua cac nam truoc neu co the. Kiem tra ten sinh vien, nam, ten advisor, chu de, ky thuat va cac ban ghi trung lap. Khong dung ban ghi extraction loi lam ground truth.
+
+3. Chot schema matching
+   Chot cac truong dung de tao text thesis va advisor. Ghi lai cach xu ly missing value, cach chuan hoa ten advisor va quota cua tung cohort.
+
+4. Chay baseline
+   Chay Random va Greedy tren cung compatibility matrix, cung cohort va cung quota. Tiep theo cai dat Gale-Shapley va SPA neu de tai yeu cau day du cac baseline nay.
+
+5. Chia train va test
+   Uu tien hold-out theo nam: cac nam cu de train, nam moi nhat de test. Neu khong du nam, dung split deterministic 80/20. Khong fit TF-IDF bang du lieu test.
+
+6. Train PPO
+   Chay it nhat 50.000 timesteps cho smoke tuning, sau do tang len 100.000 - 200.000 timesteps. Chay nhieu seed, toi thieu 3 seed. Luu metrics, khong commit checkpoint.
+
+7. Train DQN doi chung
+   Dung cung state, action, reward, cohort va quota voi PPO. Bao cao rieng so action invalid ma DQN de xuat; khong danh dong co che correction voi action masking cua PPO.
+
+8. Danh gia
+   So sanh mean compatibility, load variance, quota violations, historical top-1 accuracy va invalid proposals. Bao cao mean va standard deviation qua nhieu seed. Historical top-1 khong phai ground truth toi uu.
+
+9. Kiem tra reward
+   Lam reward ablation: compatibility only, compatibility + fairness, sau do them preference/outcome neu co du lieu tin cay. Kiem tra xem model co tap trung qua muc vao mot advisor hay khong.
+
+10. Chuan bi deploy
+    Chi chon model sau evaluation gate. Luu config, seed, dataset version, metrics va model version. Sau do moi xay API inference va giao dien.
+
+Cac lenh chinh
+--------------
+Chi tiet lenh va cach chay duoc ghi trong agent.md, README.md va docs/rl_algorithm_design.md. Khong them dataset, log, checkpoint hoac ket qua experiment vao Git.
+
+Tieu chi truoc khi ket luan
+----------------------------
+- Tat ca baseline dung cung protocol.
+- Khong co quota violation trong assignment cuoi.
+- PPO duoc danh gia tren hold-out, khong chi tren tap train.
+- Ket qua lap lai duoc voi nhieu seed.
+- So sanh co y nghia voi Greedy, khong ket luan tu smoke test ngan.

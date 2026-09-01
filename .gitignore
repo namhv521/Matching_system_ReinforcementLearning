@@ -14,17 +14,15 @@ env/
 dist/
 build/
 
-# Data (raw PDFs may be large; keep processed CSVs)
-data/*.pdf
-data/*.docx
-data/embeddings/
+# Data: keep all local datasets out of GitHub.
+data/
 
 # Logs
 logs/
 *.log
 
 # Model checkpoints
-outputs/models/
+outputs/
 *.pt
 *.pth
 *.pkl
@@ -45,9 +43,11 @@ Thumbs.db
 
 *.docx
 clean_data/
-outputs/
 tests/
 backend/
 frontend/
 
-data/1.pdfs
+# Local experiment artifacts
+*.zip
+*.jsonl
+*.csv
