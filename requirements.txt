@@ -26,12 +26,13 @@ beautifulsoup4==4.12.3
 lxml==5.2.2
 
 # ── NLP / Embedding (Phase 2) ─────────────────────────────────
+scikit-learn==1.5.1
 # sentence-transformers==3.0.1
 # faiss-cpu==1.8.0
 
 # ── RL (Phase 3) ──────────────────────────────────────────────
-# gymnasium==0.29.1
-# stable-baselines3==2.3.2
+gymnasium==0.29.1
+stable-baselines3==2.3.2
 # torch==2.3.1
 
 # ── Backend (Phase 4) ─────────────────────────────────────────
