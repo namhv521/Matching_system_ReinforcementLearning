@@ -32,6 +32,7 @@ Xây dựng hệ thống phân bổ sinh viên–giảng viên hướng dẫn kh
 python -m src.data_pipeline.clean_processed_data
 python -m src.rl.train --algorithm ppo --timesteps 10000
 python -m src.rl.train --algorithm dqn --timesteps 10000
+python -m src.rl.benchmark --timesteps 2048 --seed 42
 python -m src.data_pipeline.run_pipeline --no-crawl --limit 5
 git status --short
 ```

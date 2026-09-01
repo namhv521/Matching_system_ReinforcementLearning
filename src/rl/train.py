@@ -7,7 +7,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from stable_baselines3 import DQN, PPO
+from stable_baselines3 import DQN
+from sb3_contrib import MaskablePPO
 
 from src.environment.gym_matching_env import GymMatchingEnv
 from src.environment.matching_core import build_compatibility
@@ -21,7 +22,7 @@ MODELS = ROOT / "outputs" / "models"
 def load_environment(seed: int) -> tuple[GymMatchingEnv, pd.DataFrame, pd.DataFrame]:
     theses = pd.read_csv(CLEANED / "theses.csv", encoding="utf-8-sig")
     advisors = pd.read_csv(CLEANED / "advisors.csv", encoding="utf-8-sig")
-    compatibility = build_compatibility(theses, advisors)
+    compatibility, _ = build_compatibility(theses, advisors)
     capacity = math.ceil(len(theses) / len(advisors))
     env = GymMatchingEnv(compatibility, np.full(len(advisors), capacity, dtype=np.int32))
     env.reset(seed=seed)
@@ -50,7 +51,7 @@ def main():
     random.seed(args.seed); np.random.seed(args.seed)
     env, theses, advisors = load_environment(args.seed)
     if args.algorithm == "ppo":
-        model = PPO("MlpPolicy", env, seed=args.seed, verbose=0, n_steps=256, batch_size=64)
+        model = MaskablePPO("MlpPolicy", env, seed=args.seed, verbose=0, n_steps=256, batch_size=64)
     else:
         model = DQN("MlpPolicy", env, seed=args.seed, verbose=0, learning_starts=500, buffer_size=20_000, batch_size=64)
     model.learn(total_timesteps=args.timesteps)

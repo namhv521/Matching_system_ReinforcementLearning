@@ -20,8 +20,18 @@ Fairness bonus là mức cải thiện so với load variance trước action. S
 ## Huấn luyện và đánh giá
 PPO là model chính vì phù hợp policy gradient và action masking/custom environment. DQN là đối chứng trên cùng state/action/reward. Split theo cohort/năm để tránh leakage; báo cáo mean/std qua nhiều seed. So sánh thêm Random và Greedy trước khi kết luận RL tốt hơn.
 
-### Giới hạn adapter SB3 v1
-`stable-baselines3` chuẩn không áp dụng action mask cho PPO/DQN. `GymMatchingEnv` vì vậy thay action đề xuất đã hết quota bằng advisor hợp lệ có compatibility cao nhất và ghi `invalid_proposals` vào metrics. Đây là hard-constraint safety cho MVP, không phải action masking thực sự. Khi benchmark chính thức PPO, thay adapter bằng `sb3-contrib MaskablePPO` và báo cáo metric invalid proposals.
+### Action masking và DQN
+PPO dùng `sb3-contrib MaskablePPO` và `GymMatchingEnv.action_masks()`, nên advisor hết quota không thể được PPO chọn. DQN chuẩn không hỗ trợ action mask; environment thay action không hợp lệ bằng advisor hợp lệ có compatibility cao nhất và ghi `invalid_proposals`. Vì vậy metric này phải được báo cáo và DQN không được coi là bằng chứng về action masking.
+
+## Protocol benchmark v2
+- Train dùng thesis của các năm trước; test hold-out là năm mới nhất. Nếu không thể tách theo năm, fallback là split deterministic 80/20 theo `student_id`.
+- TF-IDF vocabulary chỉ fit từ thesis train và advisor profiles; test chỉ transform để hạn chế text leakage.
+- Mọi model và baseline đều dùng cùng advisor set, quota `ceil(cohort_size / advisor_count)` và compatibility matrix của cohort test.
+- Metrics: mean compatibility, load variance, quota violations, historical top-1 accuracy và invalid proposals.
+- Historical top-1 chỉ là mức độ tái tạo phân công lịch sử; nó không phải ground truth về matching tối ưu.
+
+### Kết quả smoke benchmark (seed 42, 512 timesteps)
+Split `year_2025_holdout` có 27 train và 163 test, nên chỉ dùng để xác nhận pipeline. Greedy đạt compatibility 0.219228; PPO Maskable mới train ngắn đạt 0.044382; DQN đạt 0.213330 nhưng có 157 invalid proposals. Chưa được dùng kết quả này để kết luận RL tốt hơn baseline. Cần có thêm cohort lịch sử hoặc dùng 80/20 cho tuning, sau đó chạy nhiều seed với 50k–200k timesteps.
 
 ## Giai đoạn triển khai
 1. Cleaning + quality report (đã tạo).

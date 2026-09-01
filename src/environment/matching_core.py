@@ -15,13 +15,16 @@ def _row_text(frame: pd.DataFrame, columns: list[str]) -> list[str]:
     return frame.reindex(columns=columns, fill_value="").fillna("").astype(str).agg(" ".join, axis=1).tolist()
 
 
-def build_compatibility(theses: pd.DataFrame, advisors: pd.DataFrame) -> np.ndarray:
-    """Return one reproducible thesis-by-advisor cosine similarity matrix."""
+def build_compatibility(theses: pd.DataFrame, advisors: pd.DataFrame, vectorizer=None, fit: bool = True):
+    """Return compatibility and vectorizer; fit vocabulary only on training data."""
     thesis_text = _row_text(theses, THESIS_TEXT_COLUMNS)
     advisor_text = _row_text(advisors, ADVISOR_TEXT_COLUMNS)
-    vectorizer = TfidfVectorizer(lowercase=True, ngram_range=(1, 2), min_df=1)
-    vectors = vectorizer.fit_transform(thesis_text + advisor_text)
-    return cosine_similarity(vectors[: len(theses)], vectors[len(theses) :]).astype(np.float32)
+    if vectorizer is None:
+        vectorizer = TfidfVectorizer(lowercase=True, ngram_range=(1, 2), min_df=1)
+    if fit:
+        vectors = vectorizer.fit_transform(thesis_text + advisor_text)
+        return cosine_similarity(vectors[: len(theses)], vectors[len(theses) :]).astype(np.float32), vectorizer
+    return cosine_similarity(vectorizer.transform(thesis_text), vectorizer.transform(advisor_text)).astype(np.float32), vectorizer
 
 
 @dataclass

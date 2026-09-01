@@ -22,6 +22,14 @@ class GymMatchingEnv(gym.Env):
         self.invalid_proposals = 0
         return self.core.reset(), {"action_mask": self.core.valid_actions()}
 
+    def action_masks(self):
+        """Mask API required by sb3-contrib MaskablePPO."""
+        mask = self.core.valid_actions()
+        # A zero mask is invalid for categorical policies; keep one safe action.
+        if not mask.any():
+            mask = np.ones(self.action_space.n, dtype=bool)
+        return mask
+
     def step(self, action):
         action = int(action)
         valid = self.core.valid_actions()
@@ -29,6 +37,8 @@ class GymMatchingEnv(gym.Env):
         if not valid[action]:
             self.invalid_proposals += 1
             candidates = np.flatnonzero(valid)
+            if len(candidates) == 0:
+                return self.core.observation(), -2.0, True, False, {"invalid": True, "invalid_proposals": self.invalid_proposals}
             corrected = int(candidates[np.argmax(self.core.compatibility[self.core.student_index, candidates])])
         observation, reward, terminated, info = self.core.step(corrected)
         info.update({"proposed_action": action, "executed_action": corrected, "invalid_proposals": self.invalid_proposals, "action_mask": self.core.valid_actions()})

@@ -159,6 +159,24 @@ python -m src.crawler.pipeline --step 3 --slug ts-pham-xuan-lam
 
 ---
 
+## Phase 2–3 — Cleaning, matching và RL
+
+```bash
+# Tạo dữ liệu RL sạch, tái lập được (không ghi đè data/processed)
+python -m src.data_pipeline.clean_processed_data
+
+# Smoke train từng model
+python -m src.rl.train --algorithm ppo --timesteps 10000 --seed 42
+python -m src.rl.train --algorithm dqn --timesteps 10000 --seed 42
+
+# Benchmark Random, Greedy, MaskablePPO và DQN trên hold-out theo năm
+python -m src.rl.benchmark --timesteps 50000 --seed 42
+```
+
+`src.rl.benchmark` báo cáo compatibility, fairness/load variance, quota violations, historical top-1 accuracy và invalid proposals. Chỉ coi PPO tốt hơn khi kết quả vượt Greedy trên hold-out qua nhiều seed; không dùng smoke run làm kết luận học thuật.
+
+---
+
 ## Ghi chú học thuật
 
 **Về vai trò của RL:** Nếu thiếu grade/feedback thực tế, reward được xây từ compatibility + fairness. RL có giá trị hơn Greedy/Gale-Shapley ở điểm **Continuous Learning** — policy cải thiện theo cohort mới, không chỉ tối ưu một lần.
