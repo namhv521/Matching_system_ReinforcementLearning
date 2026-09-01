@@ -1,188 +1,73 @@
-# Hệ thống RL Phân bổ Sinh viên – Giảng viên Hướng dẫn
+﻿# Hệ thống RL Phân bổ Sinh viên – Giảng viên Hướng dẫn
 
-> **Reinforcement Learning-Based Student–Advisor Matching System**
-
-
----
+> Reinforcement Learning-Based Student–Advisor Matching System
 
 ## Giới thiệu
 
-Đề tài xây dựng hệ thống hỗ trợ phân bổ tối ưu sinh viên – giảng viên hướng dẫn khóa luận tốt nghiệp bằng **Reinforcement Learning**, kết hợp:
+Dự án nghiên cứu hệ thống hỗ trợ phân bổ sinh viên thực hiện khóa luận tốt nghiệp cho giảng viên hướng dẫn. Hệ thống kết hợp biểu diễn ngôn ngữ tự nhiên của đề tài và hồ sơ chuyên môn giảng viên với Reinforcement Learning để tối ưu phân bổ trên toàn cohort.
 
-- **NLP / Embedding** để biểu diễn nội dung khóa luận và hồ sơ nghiên cứu giảng viên
-- **Matching Simulator** xây từ dữ liệu khóa luận lịch sử để train RL offline
-- **PPO** (mô hình chính) và **DQN** (đối chứng) tối ưu assignment toàn cohort
-- **Continuous Learning** — candidate model V2 được tạo và đánh giá sau mỗi cohort mới
-- **Web Application** cho Student / Advisor / Admin
+Mục tiêu không chỉ là chọn giảng viên có độ tương thích cao cho từng sinh viên độc lập, mà còn cân bằng workload, tuân thủ quota và tạo nền tảng để cải thiện policy khi có thêm dữ liệu feedback ở các cohort tiếp theo.
 
-**Điểm phân biệt với Greedy/Gale-Shapley:** RL học policy có thể cải thiện theo thời gian khi thu thập thêm feedback, không chỉ tối ưu một lần.
+## Mục tiêu nghiên cứu
 
----
+- Xây dựng dữ liệu khóa luận và hồ sơ giảng viên có thể tái lập, có kiểm tra chất lượng.
+- Tính compatibility giữa thesis và advisor từ nội dung đề tài, lĩnh vực và kỹ năng chuyên môn.
+- Mô hình hóa bài toán phân bổ tuần tự với quota là hard constraint.
+- Sử dụng PPO có action masking là mô hình chính; DQN là mô hình đối chứng.
+- So sánh khách quan với Random, Greedy Similarity, Gale–Shapley và Student–Project Allocation khi các baseline tương ứng hoàn thiện.
+- Đánh giá bằng compatibility, fairness, quota violations, historical matching accuracy và outcome/feedback khi dữ liệu này sẵn sàng.
 
-## Cấu trúc dự án
+## Thành phần hệ thống
 
-```
-student-advisor-rl/
-│
-├── data/
-│   ├── 1.pdfs/                    ← ~200 file khóa luận PDF/DOCX (input)
-│   ├── processed/                 ← CSV/JSON đầu ra của pipeline
-│   │   ├── thesis_extracted.csv   ← thông tin trích từ PDF (Gemini/LLM)
-│   │   ├── pdf_dataset.csv        ← dataset chuẩn hóa (schema khảo sát)
-│   │   ├── advisor_skills.csv     ← skill tổng hợp từ PDF
-│   │   ├── advisor_profiles.csv   ← hồ sơ GV đầy đủ + rating
-│   │   ├── advisor_research_profiles.json  ← research profile từ crawler
-│   │   └── advisor_skills_extracted.csv    ← skill + evidence + strength
-│   ├── raw/
-│   │   ├── lecturers_list.json    ← danh sách 29 GV (slug, URL)
-│   │   ├── lecturers_raw.json     ← raw HTML data của tất cả GV
-│   │   └── profiles/              ← raw profile từng GV (<slug>.json)
-│   └── embeddings/                ← vector embeddings (Phase 2)
-│
-├── src/
-│   ├── data_pipeline/             ← Phase 1: thu thập & làm sạch dữ liệu PDF
-│   │   ├── pdf_ocr.py             ← pypdf + OCR fallback
-│   │   ├── llm_extractor.py       ← LLM extraction (9router / Gemini) với model rotation
-│   │   ├── clean_data.py          ← pipeline chính: PDF → thesis_extracted.csv
-│   │   ├── build_pdf_dataset.py   ← chuẩn hóa schema → pdf_dataset.csv
-│   │   ├── build_advisor_skills.py ← tổng hợp skill GV từ PDF data
-│   │   ├── crawl_advisor_data.py  ← enrich từ Semantic Scholar (tùy chọn)
-│   │   └── run_pipeline.py        ← entry point: chạy toàn bộ pipeline
-│   │
-│   ├── crawler/                   ← Phase 1b: crawl website fit.neu.edu.vn
-│   │   ├── lecturer_list_crawler.py  ← Step 1: lấy danh sách GV
-│   │   ├── lecturer_detail_crawler.py ← Step 2: crawl từng profile (raw)
-│   │   ├── skill_extractor.py     ← Step 3: taxonomy match + evidence + strength
-│   │   └── pipeline.py            ← entry point crawler
-│   │
-│   ├── nlp/                       ← Phase 2: embedding & similarity (TODO)
-│   ├── environment/               ← Phase 3: Gymnasium matching env (TODO)
-│   ├── rl/
-│   │   ├── ppo/                   ← PPO — mô hình RL chính (TODO)
-│   │   └── dqn/                   ← DQN — mô hình RL đối chứng (TODO)
-│   ├── baselines/                 ← Random, Greedy, Gale-Shapley, SPA (TODO)
-│   ├── simulator/                 ← Matching Simulator (TODO)
-│   └── model_registry/            ← Model versioning, evaluation gate (TODO)
-│
-├── configs/
-│   ├── settings.py                ← tất cả path, hằng số, schema CSV
-│   └── advisor_overrides.json     ← thông tin GV bổ sung thủ công
-│
-├── clean_data/
-│   └── khaosat_kltn.csv           ← khảo sát Google Forms (input tham khảo)
-│
-├── outputs/
-│   ├── results/                   ← kết quả thí nghiệm
-│   ├── figures/                   ← biểu đồ
-│   └── models/                    ← checkpoint RL
-│
-├── notebooks/                     ← EDA, NLP analysis, experiment results
-├── backend/                       ← FastAPI service (Phase 4)
-├── frontend/                      ← React + TypeScript (Phase 4)
-├── tests/
-├── .env.example
-└── requirements.txt
-```
+### Dữ liệu và preprocessing
 
----
+Dự án thu thập thông tin từ các khóa luận PDF/DOCX, khảo sát và hồ sơ công khai của giảng viên. Pipeline tạo dữ liệu trích xuất, profile kỹ năng theo giảng viên và dataset đã làm sạch dành riêng cho thí nghiệm RL.
 
-## Cài đặt
+Nguồn dữ liệu raw được tách biệt khỏi dữ liệu processed. Bước cleaning là deterministic, chỉ ghi kết quả mới vào thư mục dữ liệu sạch và không ghi đè dữ liệu nguồn.
 
-```bash
-# Cài dependencies
-pip install -r requirements.txt
+### Compatibility
 
-# Cài Playwright browsers (dùng cho crawler)
-python -m playwright install chromium
+Phiên bản hiện tại sử dụng TF-IDF với cosine similarity trên title, field, công nghệ của thesis và các trường chuyên môn của advisor. Vocabulary được fit trên tập train, còn tập hold-out chỉ được transform để hạn chế data leakage.
 
-# Tạo .env
-copy .env.example .env
-# Điền NINEROUTER_BASE_URL, NINEROUTER_API_KEY, NINEROUTER_MODEL
-```
+### Matching environment
 
-### Cấu hình `.env`
+Mỗi episode xử lý lần lượt các sinh viên trong một cohort. Mỗi action là chọn một advisor. State bao gồm compatibility của sinh viên hiện tại, capacity còn lại và workload hiện tại của tất cả advisor.
 
-```env
-# LLM Provider: "openai_compat" (9router) hoặc "gemini"
-LLM_PROVIDER=openai_compat
+Quota được coi là ràng buộc cứng. PPO dùng action masking để không chọn advisor đã đầy quota. DQN được giữ làm đối chứng; số action không hợp lệ mà DQN đề xuất được đo và báo cáo riêng.
 
-# 9router endpoint
-NINEROUTER_BASE_URL=http://localhost:20128/v1
-NINEROUTER_API_KEY=sk-...
-NINEROUTER_MODEL=kr/claude-haiku-4.5
+### Reward
 
-# Model rotation — tự động khi model bị limit
-# NINEROUTER_MODEL_LIST=kr/claude-haiku-4.5,ag/gemini-3-flash,...
-```
+Reward v1 kết hợp compatibility và phần thưởng cân bằng tải. Assignment không hợp lệ bị phạt. Khi có dữ liệu preference, grade hoặc feedback đủ tin cậy, reward sẽ được mở rộng bằng các thành phần này với trọng số được version hóa.
 
----
+## Trạng thái triển khai
 
-## Phase 1 — Data Pipeline (đang thực hiện)
+Đã hoàn thành các phần sau:
 
-### A. Trích xuất thông tin từ PDF khóa luận
+- Pipeline trích xuất và tổng hợp dữ liệu khóa luận.
+- Crawler và profile kỹ năng giảng viên.
+- Cleaning dataset tái lập được cho thí nghiệm RL.
+- TF-IDF cosine compatibility matrix.
+- Sequential matching environment với quota và fairness reward.
+- PPO có action masking, DQN đối chứng, Random và Greedy Similarity.
+- Benchmark hold-out theo năm, có fallback deterministic khi không thể tách cohort theo năm.
 
-```bash
-# Chạy toàn bộ (extract → build dataset → skill profiles)
-python -m src.data_pipeline.run_pipeline --no-crawl
+Các phần tiếp theo gồm Gale–Shapley, Student–Project Allocation, preference modeling, outcome feedback, model registry và lớp ứng dụng phục vụ inference.
 
-# Test với 5 file trước
-python -m src.data_pipeline.run_pipeline --no-crawl --limit 5
+## Đánh giá thực nghiệm
 
-# Re-process tất cả (kể cả đã xong)
-python -m src.data_pipeline.run_pipeline --no-crawl --force
+Protocol hiện tại train trên các cohort trước và đánh giá trên cohort của năm mới nhất. Khi không đủ dữ liệu theo thời gian, hệ thống dùng split deterministic theo định danh sinh viên để phục vụ kiểm thử kỹ thuật.
 
-# Từng bước riêng
-python -m src.data_pipeline.clean_data          # PDF → thesis_extracted.csv
-python -m src.data_pipeline.build_pdf_dataset   # → pdf_dataset.csv
-python -m src.data_pipeline.build_advisor_skills # → advisor_skills.csv
-```
+Các metric gồm mean compatibility, load variance, quota violations, historical top-1 accuracy và invalid proposals. Historical top-1 accuracy chỉ phản ánh mức độ tái tạo assignment lịch sử; không được coi là ground truth của phân bổ tối ưu.
 
-**LLM model rotation:** Khi một model bị rate-limit hoặc từ chối, pipeline tự động chuyển sang model tiếp theo trong `NINEROUTER_MODEL_LIST`. Progress được lưu sau mỗi file — ngắt bất cứ lúc nào không mất dữ liệu.
+Kết quả smoke test chỉ chứng minh pipeline hoạt động. Kết luận học thuật yêu cầu nhiều seed, số timesteps đủ lớn, baseline đầy đủ và dữ liệu train có quy mô phù hợp.
 
-### B. Crawl hồ sơ giảng viên từ fit.neu.edu.vn
+## Tài liệu liên quan
 
-```bash
-# Chạy full pipeline crawler (3 bước)
-python -m src.crawler.pipeline
+- `agent.md`: quy tắc làm việc, vị trí dữ liệu và hướng dẫn vận hành cho các lần phát triển tiếp theo.
+- `docs/rl_algorithm_design.md`: state, action, reward, masking, protocol benchmark và các giới hạn hiện tại.
+- `requirements.txt`: dependency của pipeline, NLP và RL.
+- `configs/settings.py`: cấu hình đường dẫn, schema và biến môi trường.
 
-# Từng bước riêng
-python -m src.crawler.pipeline --step 1   # lấy danh sách 29 GV
-python -m src.crawler.pipeline --step 2   # crawl từng profile
-python -m src.crawler.pipeline --step 3   # extract skill + research topics
+## Lưu ý dữ liệu và đạo đức
 
-# Crawl một GV cụ thể
-python -m src.crawler.pipeline --step 2 --slug ts-pham-xuan-lam
-python -m src.crawler.pipeline --step 3 --slug ts-pham-xuan-lam
-```
-
-**Incremental crawl:** Bổ sung GV vào `data/raw/lecturers_list.json` rồi chạy lại `--step 2` — chỉ crawl người chưa có file trong `data/raw/profiles/`.
-
----
-
-## Phase 2–3 — Cleaning, matching và RL
-
-```bash
-# Tạo dữ liệu RL sạch, tái lập được (không ghi đè data/processed)
-python -m src.data_pipeline.clean_processed_data
-
-# Smoke train từng model
-python -m src.rl.train --algorithm ppo --timesteps 10000 --seed 42
-python -m src.rl.train --algorithm dqn --timesteps 10000 --seed 42
-
-# Benchmark Random, Greedy, MaskablePPO và DQN trên hold-out theo năm
-python -m src.rl.benchmark --timesteps 50000 --seed 42
-```
-
-`src.rl.benchmark` báo cáo compatibility, fairness/load variance, quota violations, historical top-1 accuracy và invalid proposals. Chỉ coi PPO tốt hơn khi kết quả vượt Greedy trên hold-out qua nhiều seed; không dùng smoke run làm kết luận học thuật.
-
----
-
-## Ghi chú học thuật
-
-**Về vai trò của RL:** Nếu thiếu grade/feedback thực tế, reward được xây từ compatibility + fairness. RL có giá trị hơn Greedy/Gale-Shapley ở điểm **Continuous Learning** — policy cải thiện theo cohort mới, không chỉ tối ưu một lần.
-
-**Metric đánh giá (không cần grade):**
-- Compatibility score (cosine similarity thesis ↔ advisor research)
-- Recall@K / MRR so với historical assignment
-- Load variance & quota violations
-- So sánh PPO vs DQN vs Greedy vs Gale-Shapley trên cùng dataset
+Dữ liệu sinh viên và giảng viên cần được sử dụng theo đúng phạm vi được cho phép. Hệ thống là công cụ hỗ trợ ra quyết định; kết quả matching cần được admin hoặc hội đồng chuyên môn kiểm tra trước khi áp dụng chính thức.
