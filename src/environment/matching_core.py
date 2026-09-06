@@ -15,10 +15,32 @@ def _row_text(frame: pd.DataFrame, columns: list[str]) -> list[str]:
     return frame.reindex(columns=columns, fill_value="").fillna("").astype(str).agg(" ".join, axis=1).tolist()
 
 
-def build_compatibility(theses: pd.DataFrame, advisors: pd.DataFrame, vectorizer=None, fit: bool = True):
-    """Return compatibility and vectorizer; fit vocabulary only on training data."""
+def build_compatibility(
+    theses: pd.DataFrame,
+    advisors: pd.DataFrame,
+    vectorizer=None,
+    fit: bool = True,
+    backend: str = "tfidf",
+    embedding_model: str = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+):
+    """Build compatibility with a leak-safe TF-IDF or optional multilingual encoder.
+
+    TF-IDF is the deterministic default for reproducible local runs.  The
+    multilingual Sentence-Transformers backend is opt-in because it downloads
+    a model and needs substantially more RAM; when used, the encoder is fit
+    only once on the training pipeline and reused for hold-out rows.
+    """
     thesis_text = _row_text(theses, THESIS_TEXT_COLUMNS)
     advisor_text = _row_text(advisors, ADVISOR_TEXT_COLUMNS)
+    if backend == "sentence_transformer":
+        if vectorizer is None:
+            from sentence_transformers import SentenceTransformer
+            vectorizer = SentenceTransformer(embedding_model)
+        thesis_vectors = vectorizer.encode(thesis_text, normalize_embeddings=True, show_progress_bar=False)
+        advisor_vectors = vectorizer.encode(advisor_text, normalize_embeddings=True, show_progress_bar=False)
+        return (np.asarray(thesis_vectors) @ np.asarray(advisor_vectors).T).astype(np.float32), vectorizer
+    if backend != "tfidf":
+        raise ValueError(f"Unsupported compatibility backend: {backend}")
     if vectorizer is None:
         vectorizer = TfidfVectorizer(lowercase=True, ngram_range=(1, 2), min_df=1)
     if fit:

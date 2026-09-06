@@ -37,7 +37,7 @@ LLM_PROVIDER         = os.getenv("LLM_PROVIDER", "openai_compat")
 # ── 9router / OpenAI-compatible ───────────────────────────────
 NINEROUTER_BASE_URL  = os.getenv("NINEROUTER_BASE_URL", "http://localhost:20128/v1")
 NINEROUTER_API_KEY   = os.getenv("NINEROUTER_API_KEY", "")
-NINEROUTER_MODEL     = os.getenv("NINEROUTER_MODEL", "kr/claude-haiku-4.5")
+NINEROUTER_MODEL     = os.getenv("NINEROUTER_MODEL", "cx/gpt-5.6-luna")
 
 # Model rotation — thử lần lượt khi model trước bị limit/lỗi
 # Có thể override bằng NINEROUTER_MODEL_LIST="model1,model2,model3" trong .env

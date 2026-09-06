@@ -2,6 +2,7 @@
 import argparse
 import json
 import math
+import os
 import random
 from pathlib import Path
 
@@ -22,7 +23,8 @@ MODELS = ROOT / "outputs" / "models"
 def load_environment(seed: int) -> tuple[GymMatchingEnv, pd.DataFrame, pd.DataFrame]:
     theses = pd.read_csv(CLEANED / "theses.csv", encoding="utf-8-sig")
     advisors = pd.read_csv(CLEANED / "advisors.csv", encoding="utf-8-sig")
-    compatibility, _ = build_compatibility(theses, advisors)
+    backend = os.getenv("MATCHING_TEXT_BACKEND", "tfidf")
+    compatibility, _ = build_compatibility(theses, advisors, backend=backend)
     capacity = math.ceil(len(theses) / len(advisors))
     env = GymMatchingEnv(compatibility, np.full(len(advisors), capacity, dtype=np.int32))
     env.reset(seed=seed)
@@ -35,7 +37,10 @@ def evaluate(model, env: GymMatchingEnv) -> dict:
     reward = 0.0
     compatibility = []
     while not done:
-        action, _ = model.predict(observation, deterministic=True)
+        # MaskablePPO must receive the current mask at inference too; otherwise
+        # a trained policy can propose a full advisor and be silently corrected.
+        kwargs = {"action_masks": env.action_masks()} if isinstance(model, MaskablePPO) else {}
+        action, _ = model.predict(observation, deterministic=True, **kwargs)
         observation, step_reward, done, _, info = env.step(action)
         reward += step_reward
         compatibility.append(info["compatibility"])

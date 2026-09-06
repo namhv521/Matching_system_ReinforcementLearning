@@ -27,7 +27,9 @@ lxml==5.2.2
 
 # ── NLP / Embedding (Phase 2) ─────────────────────────────────
 scikit-learn==1.5.1
-# sentence-transformers==3.0.1
+scipy>=1.11
+# Optional semantic backend for Vietnamese/multilingual text:
+# sentence-transformers>=6.0
 # faiss-cpu==1.8.0
 
 # ── RL (Phase 3) ──────────────────────────────────────────────

@@ -15,10 +15,25 @@ V1 dùng TF-IDF cosine trên text ghép từ thesis title, field, technologies v
 
 ## Reward
 `r = 1.0 * compatibility + 0.15 * fairness_bonus - 2.0 * invalid_penalty`.
-Fairness bonus là mức cải thiện so với load variance trước action. Sau khi có feedback thật, bổ sung preference/outcome với trọng số được ghi trong config.
+Fairness bonus là mức cải thiện so với load variance trước action. Invalid action
+không thể đi qua mask trong PPO; penalty vẫn dùng để đo DQN và policy không mask.
+Chưa có dữ liệu preference/outcome đủ tin cậy để đưa vào reward như nhãn giả.
 
 ## Huấn luyện và đánh giá
-PPO là model chính vì phù hợp policy gradient và action masking/custom environment. DQN là đối chứng trên cùng state/action/reward. Split theo cohort/năm để tránh leakage; báo cáo mean/std qua nhiều seed. So sánh thêm Random và Greedy trước khi kết luận RL tốt hơn.
+PPO là model chính vì phù hợp policy gradient và action masking/custom environment. DQN là đối chứng trên cùng state/action/reward. Split theo cohort/năm để tránh leakage; báo cáo mean/std qua nhiều seed. So sánh thêm Random, Greedy, Gale–Shapley/SPA và exact capacitated assignment trước khi kết luận RL tốt hơn.
+
+## Policy và giới hạn
+
+Không có cơ sở để gọi một policy là “hoàn hảo” khi dữ liệu lịch sử nhỏ và
+không có nhãn preference/outcome đầy đủ. PPO Maskable là policy RL chính;
+exact assignment là upper bound và fallback an toàn cho admin. Chỉ deploy PPO
+khi vượt gate hold-out qua nhiều seed, không vi phạm quota và không kém baseline
+có ý nghĩa thống kê.
+
+Compatibility mặc định là TF-IDF để tái lập. Có thể bật
+`MATCHING_TEXT_BACKEND=sentence_transformer` với
+`sentence-transformers/paraphrase-multilingual-mpnet-base-v2`; phải ghi model
+version và giữ nguyên split trước khi so sánh.
 
 ### Action masking và DQN
 PPO dùng `sb3-contrib MaskablePPO` và `GymMatchingEnv.action_masks()`, nên advisor hết quota không thể được PPO chọn. DQN chuẩn không hỗ trợ action mask; environment thay action không hợp lệ bằng advisor hợp lệ có compatibility cao nhất và ghi `invalid_proposals`. Vì vậy metric này phải được báo cáo và DQN không được coi là bằng chứng về action masking.

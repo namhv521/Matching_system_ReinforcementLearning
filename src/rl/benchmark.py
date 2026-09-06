@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import linear_sum_assignment
 
 from src.environment.gym_matching_env import GymMatchingEnv
 from src.environment.matching_core import build_compatibility
@@ -27,6 +28,40 @@ def baseline(matrix, capacities, strategy, seed):
             action = int(rng.choice(valid))
         assignments.append(action); loads[action] += 1
     return np.asarray(assignments)
+
+
+def optimal_assignment(matrix, capacities):
+    """Solve the finite capacitated assignment exactly (evaluation upper bound)."""
+    slots = np.repeat(np.arange(matrix.shape[1]), capacities.astype(int))
+    rows, cols = linear_sum_assignment(-matrix[:, slots])
+    actions = np.empty(matrix.shape[0], dtype=int)
+    actions[rows] = slots[cols]
+    return actions
+
+
+def deferred_acceptance(matrix, capacities):
+    """Student-proposing Gale-Shapley with advisor capacities (SPA form)."""
+    n_students, n_advisors = matrix.shape
+    preferences = np.argsort(-matrix, axis=1)
+    rank = np.argsort(-matrix, axis=0)
+    held = [[] for _ in range(n_advisors)]
+    next_choice = np.zeros(n_students, dtype=int)
+    free = list(range(n_students))
+    while free:
+        student = free.pop(0)
+        if next_choice[student] >= n_advisors:
+            continue
+        advisor = int(preferences[student, next_choice[student]])
+        next_choice[student] += 1
+        held[advisor].append(student)
+        held[advisor].sort(key=lambda s: int(rank[s, advisor]))
+        if len(held[advisor]) > int(capacities[advisor]):
+            rejected = held[advisor].pop()
+            free.append(rejected)
+    actions = np.full(n_students, -1, dtype=int)
+    for advisor, students in enumerate(held):
+        actions[students] = advisor
+    return actions
 
 
 def split_by_year(theses):
@@ -75,6 +110,11 @@ def main():
     rows = []
     for name in ("random", "greedy"):
         row = metrics(baseline(test_matrix, test_capacity, name, args.seed), test_matrix, test_capacity, actual)
+        row.update({"algorithm": name, "invalid_proposals": 0}); rows.append(row)
+    row = metrics(optimal_assignment(test_matrix, test_capacity), test_matrix, test_capacity, actual)
+    row.update({"algorithm": "exact_optimal_upper_bound", "invalid_proposals": 0}); rows.append(row)
+    for name in ("gale_shapley", "spa_deferred_acceptance"):
+        row = metrics(deferred_acceptance(test_matrix, test_capacity), test_matrix, test_capacity, actual)
         row.update({"algorithm": name, "invalid_proposals": 0}); rows.append(row)
     from sb3_contrib import MaskablePPO
     from stable_baselines3 import DQN
