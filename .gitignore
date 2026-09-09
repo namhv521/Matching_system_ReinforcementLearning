@@ -46,9 +46,11 @@ clean_data/
 tests/
 backend/
 frontend/
+notebooks/
 
 # Local experiment artifacts
 *.zip
 *.jsonl
 *.csv
 NEXT_STEPS.txt
+docs/danh_gia_train_200k_500k_1m_va_khuyen_nghi.txt
