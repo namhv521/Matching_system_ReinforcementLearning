@@ -138,7 +138,10 @@ def assign_student_roles(row: pd.Series) -> tuple[str, str]:
 
 def run() -> dict:
     CURATED.mkdir(parents=True, exist_ok=True)
-    thesis = pd.read_csv(PROCESSED / "thesis_extracted.csv", encoding="utf-8-sig")
+    thesis_source = PROCESSED / "thesis_extracted.csv"
+    if not thesis_source.exists():
+        thesis_source = CURATED / "theses.csv"
+    thesis = pd.read_csv(thesis_source, encoding="utf-8-sig")
     profiles = json.loads((RAW / "lecturers_raw.json").read_text(encoding="utf-8"))
     supplements_path = ROOT / "configs" / "lecturer_supplements.json"
     if supplements_path.exists():
@@ -146,7 +149,8 @@ def run() -> dict:
         existing_slugs = {p.get("slug") for p in profiles}
         profiles.extend(p for p in supplements if p.get("slug") not in existing_slugs)
     profiles = [p for p in profiles if "error" not in p]
-    thesis["advisor_name_raw"] = thesis["advisor_name"].map(clean_text)
+    raw_name_source = thesis["advisor_name_raw"] if "advisor_name_raw" in thesis.columns else thesis["advisor_name"]
+    thesis["advisor_name_raw"] = raw_name_source.map(clean_text)
     roster = build_roster(profiles, thesis["advisor_name_raw"].tolist())
     resolver = AdvisorResolver(roster)
     matches = thesis["advisor_name_raw"].map(resolver.resolve)
@@ -160,7 +164,16 @@ def run() -> dict:
     usable &= thesis["advisor_id"].notna()
     curated_theses = thesis[usable].copy()
     curated_theses["student_id"] = curated_theses["student_id"].astype(str).str.replace(r"\.0$", "", regex=True)
-    role_cols = [c for c in curated_theses.columns if c not in {"source_file", "extraction_notes"}]
+    role_cols = [
+        c for c in [
+            "thesis_title", "field_category", "web_languages", "frontend_frameworks",
+            "backend_frameworks", "database_cache", "web_api_tech", "app_languages",
+            "app_frameworks", "app_db_backend", "mobile_client_tech", "architecture",
+            "ai_frameworks", "ai_problems", "data_tools", "data_models", "game_engine",
+            "game_type", "specialty_field", "tools_environment", "hardware", "iot_protocol",
+            "research_methods", "research_output",
+        ] if c in curated_theses.columns
+    ]
     roles = curated_theses[role_cols].apply(assign_student_roles, axis=1)
     curated_theses["primary_role"] = roles.map(lambda x: x[0])
     curated_theses["secondary_roles"] = roles.map(lambda x: x[1])
@@ -168,6 +181,21 @@ def run() -> dict:
 
     roster_df = pd.DataFrame(roster)
     evidence_df = build_advisor_evidence(profiles, roster, curated_theses)
+    advisor_rows = []
+    for roster_row in roster:
+        subset = evidence_df[evidence_df["advisor_id"].eq(roster_row["advisor_id"])].sort_values(
+            ["skill_score", "skill"], ascending=[False, True]
+        )
+        skills = subset["skill"].tolist()
+        advisor_rows.append({
+            **roster_row,
+            "advisor_name": roster_row["canonical_name"],
+            "primary_field": skills[0] if skills else "General Information Technology",
+            "skill_text": " ".join(skills),
+            "skill_count": len(skills),
+            "publication_evidence_count": int(subset["publication_evidence_count"].sum()) if not subset.empty else 0,
+        })
+    advisors_df = pd.DataFrame(advisor_rows)
     identity_df = pd.DataFrame({
         "source_name": thesis["advisor_name_raw"],
         "advisor_id": thesis["advisor_id"],
@@ -177,6 +205,7 @@ def run() -> dict:
     }).drop_duplicates().sort_values(["canonical_name", "source_name"], na_position="last")
 
     roster_df.to_csv(CURATED / "lecturers.csv", index=False, encoding="utf-8-sig")
+    advisors_df.to_csv(CURATED / "advisors.csv", index=False, encoding="utf-8-sig")
     curated_theses.to_csv(CURATED / "theses.csv", index=False, encoding="utf-8-sig")
     curated_theses[["student_id", "student_name", "primary_role", "secondary_roles", "field_category", "record_id"]].to_csv(
         CURATED / "student_profiles.csv", index=False, encoding="utf-8-sig")

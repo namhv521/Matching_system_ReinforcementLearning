@@ -71,6 +71,12 @@ python -m src.crawler.skill_extractor
 python -m src.data_pipeline.prepare_curated_data
 ```
 
+Train PPO liên tục và lưu checkpoint tại 200k, 500k và 1M bước:
+
+```powershell
+python -m src.rl.train --algorithm ppo --milestones 200000 500000 1000000 --seed 42 --verbose 1
+```
+
 Các output chính:
 
 - `lecturers.csv`: roster chuẩn, một dòng mỗi giảng viên.

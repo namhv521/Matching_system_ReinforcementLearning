@@ -8,7 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 THESIS_TEXT_COLUMNS = ["thesis_title", "field_category", "web_languages", "frontend_frameworks", "backend_frameworks", "ai_frameworks", "ai_problems", "data_tools", "research_methods"]
-ADVISOR_TEXT_COLUMNS = ["primary_field", "top_ai_frameworks", "top_web_stack", "top_backend", "top_db", "top_data_tools"]
+ADVISOR_TEXT_COLUMNS = ["primary_field", "skill_text", "top_ai_frameworks", "top_web_stack", "top_backend", "top_db", "top_data_tools"]
 
 
 def _row_text(frame: pd.DataFrame, columns: list[str]) -> list[str]:

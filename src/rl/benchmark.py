@@ -96,9 +96,9 @@ def main():
     parser.add_argument("--timesteps", type=int, default=2048)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
-    cleaned = ROOT / "data" / "cleaned"
-    theses = pd.read_csv(cleaned / "theses.csv", encoding="utf-8-sig")
-    advisors = pd.read_csv(cleaned / "advisors.csv", encoding="utf-8-sig")
+    curated = ROOT / "data" / "curated"
+    theses = pd.read_csv(curated / "theses.csv", encoding="utf-8-sig")
+    advisors = pd.read_csv(curated / "advisors.csv", encoding="utf-8-sig")
     train, test, split = split_by_year(theses)
     train_matrix, vectorizer = build_compatibility(train, advisors)
     test_matrix, _ = build_compatibility(test, advisors, vectorizer=vectorizer, fit=False)
