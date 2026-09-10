@@ -293,7 +293,12 @@ def extract_profile(raw: dict) -> dict:
 def run(slug_filter: Optional[str] = None) -> None:
     import pandas as pd
 
-    raw_files = sorted(PROFILES_DIR.glob("*.json"))
+    # Only process profiles in the latest aggregate. The cache directory may
+    # contain retired slugs or placeholder pages from earlier crawls.
+    all_raw = RAW_DIR / "lecturers_raw.json"
+    latest = json.loads(all_raw.read_text(encoding="utf-8")) if all_raw.exists() else []
+    latest_slugs = {p.get("slug") for p in latest}
+    raw_files = sorted(f for f in PROFILES_DIR.glob("*.json") if f.stem in latest_slugs)
     if not raw_files:
         logger.error("No raw profiles found. Run lecturer_detail_crawler.py first.")
         sys.exit(1)

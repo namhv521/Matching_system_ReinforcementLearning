@@ -1,0 +1,39 @@
+[
+  {
+    "slug": "ths-nguyen-phuong-nam",
+    "name": "Nguyễn Phương Nam",
+    "title": "ThS",
+    "profile_url": "https://fit.neu.edu.vn/lecturer/ths-nguyen-phuong-nam",
+    "department": "Khoa Công nghệ thông tin",
+    "teaching_raw": ["Toán rời rạc", "Giao diện người máy", "Mạng nơron và học sâu", "Trực quan hoá dữ liệu", "Ứng dụng phân tán"],
+    "research_areas_raw": ["Trí tuệ nhân tạo trong kinh tế, bảo hiểm, y sinh và giáo dục", "Tính toán lượng tử và thuật toán lượng tử", "Thị giác máy tính", "Xử lý ngôn ngữ tự nhiên", "Bayesian inference and modeling"],
+    "publications_raw": [
+      "Nguyen, P.N. (2025). Quantum technology: a financial risk assessment.",
+      "Nguyen, P.N. (2024). A quantum neural network for sequential data analysis in machine learning.",
+      "Nguyen, P.N. (2024). Quantum Word Embedding for Quantum Machine Learning."
+    ],
+    "source_note": "Official FIT profile exists but was not returned by the lecturer listing page on 2026-09-10."
+  },
+  {
+    "slug": "ths-nguyen-hung-thang",
+    "name": "Nguyễn Hùng Thắng",
+    "title": "ThS",
+    "profile_url": "",
+    "department": "Khoa Công nghệ thông tin",
+    "teaching_raw": [],
+    "research_areas_raw": ["AI Agents trong giáo dục", "An toàn thông tin"],
+    "publications_raw": ["Ứng dụng của AI Agents trong giáo dục phổ thông và đại học (FIT NEU seminar, 2026)"],
+    "source_note": "Verified from FIT NEU 2026 seminar schedule and faculty activity pages; no public profile URL found."
+  },
+  {
+    "slug": "ths-nguyen-hung-viet",
+    "name": "Nguyễn Hùng Việt",
+    "title": "ThS",
+    "profile_url": "",
+    "department": "Khoa Công nghệ thông tin",
+    "teaching_raw": ["Machine Learning", "Xử lý ngôn ngữ tự nhiên"],
+    "research_areas_raw": ["AI trong thể thao", "Phân tích dữ liệu video", "Computer Vision", "Machine Learning", "Natural Language Processing"],
+    "publications_raw": ["AI usecase in industrial environment: sport analytics and autoproduction (FIT NEU seminar, 2026)"],
+    "source_note": "Verified from FIT NEU FIT-Lab and 2026 research seminar pages; no public profile URL found."
+  }
+]

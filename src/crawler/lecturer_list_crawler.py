@@ -65,7 +65,10 @@ async def crawl() -> list[dict]:
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         page    = await browser.new_page()
-        await page.goto(LIST_URL, wait_until="networkidle", timeout=30000)
+        # The current Next.js site keeps background requests open; networkidle
+        # therefore times out even when all lecturer cards are visible.
+        await page.goto(LIST_URL, wait_until="domcontentloaded", timeout=60000)
+        await page.wait_for_timeout(5000)
         html = await page.content()
         await browser.close()
 
@@ -74,10 +77,12 @@ async def crawl() -> list[dict]:
     for a in soup.find_all("a", href=True):
         href = a["href"]
         # Pattern: /lecturer/<slug>  (but NOT just /lecturer)
-        m = re.match(r"^/lecturer/([^/]+)$", href)
+        m = re.match(r"^(?:https?://fit\.neu\.edu\.vn)?/lecturer/([^/?#]+)", href)
         if not m:
             continue
         slug = m.group(1)
+        if slug in {"lecturer", "lecturer-1"}:
+            continue
         if slug in seen_slugs:
             continue
         seen_slugs.add(slug)
@@ -106,10 +111,10 @@ async def crawl() -> list[dict]:
             "department":  "Khoa Công nghệ thông tin",
         }
         results.append(record)
-        logger.info(f"  Found: {title} {name} → {slug}")
+        logger.info(f"  Found: {title} {name} -> {slug}")
 
     OUTPUT.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
-    logger.info(f"\nTotal: {len(results)} lecturers → {OUTPUT}")
+    logger.info(f"\nTotal: {len(results)} lecturers -> {OUTPUT}")
     return results
 
 

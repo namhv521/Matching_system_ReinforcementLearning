@@ -53,6 +53,34 @@ Reward v1 kết hợp compatibility và phần thưởng cân bằng tải. Assi
 
 Các phần tiếp theo gồm Gale–Shapley, Student–Project Allocation, preference modeling, outcome feedback, model registry và lớp ứng dụng phục vụ inference.
 
+## Pipeline dữ liệu curated
+
+Không dùng trực tiếp các CSV lịch sử trong `data/processed/` để train. Quy trình mới giữ nguyên raw data và xuất bộ dữ liệu có provenance vào `data/curated/`:
+
+1. Crawl roster 36 giảng viên từ trang giảng viên FIT NEU và làm mới từng profile.
+2. Crawl học phần từ 5 chương trình đào tạo chính của Khoa.
+3. Chuẩn hoá tên giảng viên bằng khóa tên không dấu, bỏ học hàm/học vị và đối chiếu roster chính thức. Ví dụ `TS. Lưu Minh Tuấn` và `Lưu Minh Tuấn` cùng ánh xạ tới một `advisor_id` và tên chuẩn `TS Lưu Minh Tuấn`.
+4. Gán role kỹ thuật cho sinh viên từ tiêu đề, lĩnh vực, framework, công cụ và phương pháp trong bài làm.
+5. Chấm skill giảng viên theo từng bằng chứng. Bài báo/công trình nghiên cứu có trọng số cao và time-decay; môn giảng dạy, lĩnh vực nghiên cứu và đề tài từng hướng dẫn là các nguồn độc lập.
+
+```powershell
+python -m src.crawler.lecturer_list_crawler
+python -m src.crawler.lecturer_detail_crawler --force
+python -m src.crawler.course_crawler
+python -m src.crawler.skill_extractor
+python -m src.data_pipeline.prepare_curated_data
+```
+
+Các output chính:
+
+- `lecturers.csv`: roster chuẩn, một dòng mỗi giảng viên.
+- `courses.csv`: học phần, mã học phần, tín chỉ và chương trình đào tạo.
+- `theses.csv`: bài làm hợp lệ đã chuẩn hoá advisor và gán role.
+- `student_profiles.csv`: role chính/phụ của sinh viên.
+- `advisor_skill_evidence.csv`: điểm skill kèm evidence JSON và số bài báo hỗ trợ.
+- `advisor_identity_map.csv`: audit mọi tên gốc sang tên chuẩn.
+- `quality_report.json`: số dòng, coverage, fuzzy match và phân phối role.
+
 ## Đánh giá thực nghiệm
 
 Protocol hiện tại train trên các cohort trước và đánh giá trên cohort của năm mới nhất. Khi không đủ dữ liệu theo thời gian, hệ thống dùng split deterministic theo định danh sinh viên để phục vụ kiểm thử kỹ thuật.

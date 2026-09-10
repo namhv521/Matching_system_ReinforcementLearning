@@ -73,6 +73,17 @@ def _extract_profile(html: str, meta: dict) -> dict:
     text = soup.get_text(separator="\n", strip=True)
     lines = [l.strip() for l in text.splitlines() if l.strip()]
 
+    # The h1 is authoritative and preserves accents/titles better than slugs.
+    profile_h1 = next(
+        (node for node in soup.find_all("h1") if "KHOA CÔNG NGHỆ THÔNG TIN" not in node.get_text(" ", strip=True).upper()),
+        None,
+    )
+    if profile_h1:
+        heading = profile_h1.get_text(" ", strip=True)
+        from src.data_pipeline.identity import split_title_name
+        heading_title, heading_name = split_title_name(heading, meta.get("title", ""))
+        meta = {**meta, "title": heading_title, "name": heading_name}
+
     profile = {
         "slug":               meta.get("slug", ""),
         "name":               meta.get("name", ""),
@@ -110,6 +121,12 @@ def _extract_profile(html: str, meta: dict) -> dict:
         "GIẢNG DẠY":           "teaching",
         "LĨNH VỰC NGHIÊN CỨU":"research",
         "CÔNG TRÌNH KHOA HỌC": "publications",
+        "CÔNG TRÌNH NGHIÊN CỨU": "publications",
+        "CÁC BÀI BÁO KHOA HỌC": "publications",
+        "BÀI BÁO KHOA HỌC": "publications",
+        "CÁC ĐỀ TÀI NGHIÊN CỨU": "publications",
+        "ĐỀ TÀI NGHIÊN CỨU": "publications",
+        "CÁC SÁCH ĐÃ XUẤT BẢN": "publications",
         "LIÊN HỆ":             "contact",
     }
 
@@ -145,6 +162,11 @@ def _extract_profile(html: str, meta: dict) -> dict:
         ]):
             continue
 
+        if upper in {"ĐỊA CHỈ LIÊN HỆ", "THÔNG TIN", "BẢN QUYỀN THUỘC VỀ"}:
+            _flush_pub()
+            current_section = None
+            continue
+
         # Route to section
         if current_section == "bio":
             profile["bio_raw"] += line + "\n"
@@ -166,7 +188,7 @@ def _extract_profile(html: str, meta: dict) -> dict:
         elif current_section == "publications":
             # Publications span multiple lines — buffer until we detect new pub
             # New pub typically starts with author name (Vietnamese capitalized)
-            is_new_pub = bool(re.match(r"[A-ZÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]", line))
+            is_new_pub = bool(re.match(r"^(?:\[\d+\]|\d+\s*[.)-])", line))
             if is_new_pub and pub_buffer:
                 _flush_pub()
             pub_buffer.append(line)
@@ -208,7 +230,7 @@ async def crawl_one(page: Page, meta: dict) -> dict:
         return {**meta, "error": str(e), "crawled_at": datetime.now().isoformat()}
 
 
-async def crawl_all(slug_filter: str | None = None) -> list[dict]:
+async def crawl_all(slug_filter: str | None = None, force: bool = False) -> list[dict]:
     if not LIST_JSON.exists():
         logger.error(f"lecturers_list.json not found. Run lecturer_list_crawler.py first.")
         sys.exit(1)
@@ -222,7 +244,7 @@ async def crawl_all(slug_filter: str | None = None) -> list[dict]:
         if slug_filter and slug_filter.lower() not in slug.lower():
             continue
         out_file = PROFILES_DIR / f"{slug}.json"
-        if out_file.exists():
+        if out_file.exists() and not force:
             logger.info(f"Skip (already done): {slug}")
             continue
         todo.append(lec)
@@ -268,5 +290,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--slug", type=str, default=None,
                         help="Crawl only lecturer matching this slug (partial match).")
+    parser.add_argument("--force", action="store_true",
+                        help="Refresh profiles even when a cached JSON file exists.")
     args = parser.parse_args()
-    asyncio.run(crawl_all(slug_filter=args.slug))
+    asyncio.run(crawl_all(slug_filter=args.slug, force=args.force))
