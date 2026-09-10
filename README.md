@@ -63,19 +63,7 @@ Không dùng trực tiếp các CSV lịch sử trong `data/processed/` để tr
 4. Gán role kỹ thuật cho sinh viên từ tiêu đề, lĩnh vực, framework, công cụ và phương pháp trong bài làm.
 5. Chấm skill giảng viên theo từng bằng chứng. Bài báo/công trình nghiên cứu có trọng số cao và time-decay; môn giảng dạy, lĩnh vực nghiên cứu và đề tài từng hướng dẫn là các nguồn độc lập.
 
-```powershell
-python -m src.crawler.lecturer_list_crawler
-python -m src.crawler.lecturer_detail_crawler --force
-python -m src.crawler.course_crawler
-python -m src.crawler.skill_extractor
-python -m src.data_pipeline.prepare_curated_data
-```
-
-Train PPO liên tục và lưu checkpoint tại 200k, 500k và 1M bước:
-
-```powershell
-python -m src.rl.train --algorithm ppo --milestones 200000 500000 1000000 --seed 42 --verbose 1
-```
+Quá trình huấn luyện PPO được tổ chức theo các mốc tích lũy 200 nghìn, 500 nghìn và 1 triệu bước. Mô hình tiếp tục học từ checkpoint trước thay vì khởi tạo lại ở mỗi mốc, nhờ đó có thể theo dõi quá trình hội tụ và so sánh chất lượng chính sách theo thời gian huấn luyện.
 
 Các output chính:
 
