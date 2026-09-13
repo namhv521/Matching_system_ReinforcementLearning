@@ -77,7 +77,7 @@ Các output chính:
 
 ## Đánh giá thực nghiệm
 
-Protocol hiện tại train trên các cohort trước và đánh giá trên cohort của năm mới nhất. Khi không đủ dữ liệu theo thời gian, hệ thống dùng split deterministic theo định danh sinh viên để phục vụ kiểm thử kỹ thuật.
+Protocol hiện tại đưa toàn bộ khóa luận trước năm 2025 và 75% khóa luận năm 2025 vào tập train. Phần dữ liệu năm 2025 còn lại được chia gần đều cho validation và test. Việc chia tập được thực hiện ổn định theo định danh sinh viên để các bản nộp trùng của cùng một sinh viên không xuất hiện ở nhiều tập. Vocabulary TF-IDF chỉ được fit trên train; validation phục vụ so sánh các milestone, còn test chỉ được sử dụng cho lần đánh giá cuối cùng.
 
 Các metric gồm mean compatibility, load variance, quota violations, historical top-1 accuracy và invalid proposals. Historical top-1 accuracy chỉ phản ánh mức độ tái tạo assignment lịch sử; không được coi là ground truth của phân bổ tối ưu.
 

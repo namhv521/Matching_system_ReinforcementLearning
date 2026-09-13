@@ -13,6 +13,7 @@ from sb3_contrib import MaskablePPO
 
 from src.environment.gym_matching_env import GymMatchingEnv
 from src.environment.matching_core import build_compatibility
+from src.data_pipeline.split_dataset import temporal_train_validation_test_split
 
 ROOT = Path(__file__).resolve().parents[2]
 CURATED = ROOT / "data" / "curated"
@@ -20,15 +21,22 @@ RESULTS = ROOT / "outputs" / "results"
 MODELS = ROOT / "outputs" / "models"
 
 
-def load_environment(seed: int) -> tuple[GymMatchingEnv, pd.DataFrame, pd.DataFrame]:
+def load_environments(seed: int) -> tuple[dict[str, GymMatchingEnv], dict[str, pd.DataFrame], pd.DataFrame, dict]:
     theses = pd.read_csv(CURATED / "theses.csv", encoding="utf-8-sig")
     advisors = pd.read_csv(CURATED / "advisors.csv", encoding="utf-8-sig")
+    train, validation, test, split_metadata = temporal_train_validation_test_split(theses, seed=seed)
     backend = os.getenv("MATCHING_TEXT_BACKEND", "tfidf")
-    compatibility, _ = build_compatibility(theses, advisors, backend=backend)
-    capacity = math.ceil(len(theses) / len(advisors))
-    env = GymMatchingEnv(compatibility, np.full(len(advisors), capacity, dtype=np.int32))
-    env.reset(seed=seed)
-    return env, theses, advisors
+    train_matrix, vectorizer = build_compatibility(train, advisors, backend=backend)
+    validation_matrix, _ = build_compatibility(validation, advisors, vectorizer=vectorizer, fit=False, backend=backend)
+    test_matrix, _ = build_compatibility(test, advisors, vectorizer=vectorizer, fit=False, backend=backend)
+    frames = {"train": train, "validation": validation, "test": test}
+    matrices = {"train": train_matrix, "validation": validation_matrix, "test": test_matrix}
+    envs = {}
+    for name, matrix in matrices.items():
+        capacity = math.ceil(len(frames[name]) / len(advisors))
+        envs[name] = GymMatchingEnv(matrix, np.full(len(advisors), capacity, dtype=np.int32))
+        envs[name].reset(seed=seed)
+    return envs, frames, advisors, split_metadata
 
 
 def evaluate(model, env: GymMatchingEnv) -> dict:
@@ -60,7 +68,8 @@ def train_milestones(algorithm: str, milestones: list[int], seed: int, verbose: 
 
     random.seed(seed)
     np.random.seed(seed)
-    env, theses, advisors = load_environment(seed)
+    envs, frames, advisors, split_metadata = load_environments(seed)
+    env = envs["train"]
     if algorithm == "ppo":
         model = MaskablePPO(
             "MlpPolicy", env, seed=seed, verbose=verbose,
@@ -83,16 +92,21 @@ def train_milestones(algorithm: str, milestones: list[int], seed: int, verbose: 
             total_timesteps=additional_steps,
             reset_num_timesteps=(completed == 0),
         )
-        metrics = evaluate(model, env)
-        metrics.update({
+        metrics = {
             "algorithm": algorithm,
             "timesteps": milestone,
             "additional_timesteps": additional_steps,
             "seed": seed,
-            "theses": len(theses),
+            "theses": sum(len(frame) for frame in frames.values()),
             "advisors": len(advisors),
             "training_mode": "cumulative_milestones",
-        })
+            "split": split_metadata,
+            "train_metrics": evaluate(model, envs["train"]),
+            "validation_metrics": evaluate(model, envs["validation"]),
+        }
+        # Preserve the test set for one final, unbiased evaluation.
+        if milestone == milestones[-1]:
+            metrics["test_metrics"] = evaluate(model, envs["test"])
         stem = f"{algorithm}_seed{seed}_steps{milestone}"
         model.save(MODELS / stem)
         (RESULTS / f"{stem}.json").write_text(

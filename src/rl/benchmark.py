@@ -9,6 +9,7 @@ from scipy.optimize import linear_sum_assignment
 
 from src.environment.gym_matching_env import GymMatchingEnv
 from src.environment.matching_core import build_compatibility
+from src.data_pipeline.split_dataset import temporal_train_validation_test_split
 
 ROOT = Path(__file__).resolve().parents[2]
 RESULTS = ROOT / "outputs" / "results"
@@ -99,7 +100,8 @@ def main():
     curated = ROOT / "data" / "curated"
     theses = pd.read_csv(curated / "theses.csv", encoding="utf-8-sig")
     advisors = pd.read_csv(curated / "advisors.csv", encoding="utf-8-sig")
-    train, test, split = split_by_year(theses)
+    train, validation, test, split_metadata = temporal_train_validation_test_split(theses, seed=args.seed)
+    split = "temporal_2025_75_12_5_12_5"
     train_matrix, vectorizer = build_compatibility(train, advisors)
     test_matrix, _ = build_compatibility(test, advisors, vectorizer=vectorizer, fit=False)
     train_capacity = np.full(len(advisors), int(np.ceil(len(train) / len(advisors))), dtype=int)
@@ -129,7 +131,7 @@ def main():
     rows.extend([ppo_metrics, dqn_metrics])
     RESULTS.mkdir(parents=True, exist_ok=True)
     output = RESULTS / f"benchmark_{split}_seed{args.seed}_steps{args.timesteps}.json"
-    payload = {"split": split, "train_students": len(train), "test_students": len(test), "advisors": len(advisors), "timesteps": args.timesteps, "seed": args.seed, "results": rows}
+    payload = {"split": split, "split_metadata": split_metadata, "train_students": len(train), "validation_students": len(validation), "test_students": len(test), "advisors": len(advisors), "timesteps": args.timesteps, "seed": args.seed, "results": rows}
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
