@@ -90,6 +90,31 @@ Kết quả smoke test chỉ chứng minh pipeline hoạt động. Kết luận 
 - `requirements.txt`: dependency của pipeline, NLP và RL.
 - `configs/settings.py`: cấu hình đường dẫn, schema và biến môi trường.
 
+## Hệ thống Quyết định & Giao diện Trực quan hóa (Interactive Dashboard)
+
+Hệ thống cung cấp giao diện web SPA toàn diện kết hợp cùng FastAPI backend để hỗ trợ hội đồng ra quyết định phân bổ thời gian thực:
+
+- **Khởi chạy hệ thống**:
+  ```bash
+  python run_dashboard.py
+  # Hoặc: uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
+  ```
+  - **Dashboard Web**: `http://localhost:8000`
+  - **Swagger API Docs**: `http://localhost:8000/docs`
+
+- **Tính năng chính trên Dashboard**:
+  1. **Phân bổ đoàn khóa luận (Cohort Allocation)**: Lựa chọn tập cohort (Validation, Test, Train) và đối sánh 5 giải thuật thời gian thực (`Exact Hungarian`, `Maskable PPO`, `Gale-Shapley SPA`, `Greedy`, `Random`), hiển thị biểu đồ phân bổ tải hạn mức (workload quota gauge) và danh sách ghép cặp chi tiết.
+  2. **Tư vấn đề tài đơn lẻ (Single Recommendation)**: Tìm kiếm giảng viên phù hợp dựa trên biểu diễn vector cosine similarity và hạn mức khả dụng.
+  3. **Đối sánh đa chiều & Động học RL (Benchmarks & Convergence)**: Trực quan hóa đường cong học tập tại 500k, 1M, 2M steps và biểu đồ radar đa mục tiêu.
+  4. **Kho lưu trữ sơ đồ công bố (Publication Figures Gallery)**: Xem và phóng to 5 đồ thị chuẩn IEEE/ACM độ phân giải 300 DPI (`outputs/figures/`):
+     - `figure1_ppo_learning_curves.png`: Động học hội tụ Maskable PPO.
+     - `figure2_constraint_violations.png`: Hiệu quả của Action Masking trong việc triệt tiêu vi phạm quota.
+     - `figure3_algorithm_comparison.png`: Đối sánh toàn diện 8 thuật toán.
+     - `figure4_system_architecture.png`: Sơ đồ kiến trúc luồng dữ liệu toàn hệ thống.
+     - `figure5_rl_mdp_flow.png`: Quy trình ra quyết định Markov (MDP) tuần tự.
+  5. **Danh mục giảng viên (Faculty Directory)**: Danh bạ 39 giảng viên kèm hạn mức hướng dẫn, chuyên ngành và từ khóa kỹ năng.
+
+
 ## Lưu ý dữ liệu và đạo đức
 
 Dữ liệu sinh viên và giảng viên cần được sử dụng theo đúng phạm vi được cho phép. Hệ thống là công cụ hỗ trợ ra quyết định; kết quả matching cần được admin hoặc hội đồng chuyên môn kiểm tra trước khi áp dụng chính thức.
