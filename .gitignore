@@ -51,3 +51,5 @@ frontend/
 *.zip
 *.jsonl
 *.csv
+HUONG_DAN_CHAY.md
+HUONG_DAN_MONGODB.md
