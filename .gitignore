@@ -14,15 +14,25 @@ env/
 dist/
 build/
 
-# Data: keep all local datasets out of GitHub.
-data/
+# Data: keep raw/private datasets local; allow only sanitized deployment fixtures.
+data/*
+!data/public/
+!data/public/*.csv
+!data/public/*.json
 
 # Logs
 logs/
 *.log
 
-# Model checkpoints
-outputs/
+# Reproducible public artifacts; keep bulk checkpoints local.
+outputs/*
+!outputs/results/
+!outputs/results/*.json
+!outputs/figures/
+!outputs/figures/*.png
+!outputs/models/
+outputs/models/*
+!outputs/models/ppo_seed42_steps1000000.zip
 *.pt
 *.pth
 *.pkl
@@ -43,13 +53,23 @@ Thumbs.db
 
 *.docx
 clean_data/
-tests/
-backend/
-frontend/
+frontend/node_modules/
+frontend/dist/
 
 # Local experiment artifacts
 *.zip
+!outputs/models/ppo_seed42_steps1000000.zip
 *.jsonl
 *.csv
+!data/public/*.csv
+!data/public/*.json
 HUONG_DAN_CHAY.md
 HUONG_DAN_MONGODB.md
+
+# Local/editor orchestration and temporary Office files
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+~$*

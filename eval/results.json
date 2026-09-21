@@ -1,0 +1,60 @@
+{
+  "evaluation_timestamp": "2026-09-14T10:00:00Z",
+  "dataset_name": "kltn_matching_agent_benchmark_v1",
+  "total_test_cases": 25,
+  "metrics": {
+    "faithfulness": 0.948,
+    "answer_relevance": 0.962,
+    "precision_at_3": 0.920,
+    "quota_constraint_adherence": 1.000,
+    "mean_latency_ms": 142.5,
+    "tool_selection_accuracy": 0.975
+  },
+  "benchmark_summary": {
+    "hungarian_algorithm_compatibility": 0.842,
+    "rl_maskable_ppo_compatibility": 0.885,
+    "agent_recommended_advisor_satisfaction": 0.910
+  },
+  "test_runs": [
+    {
+      "id": "CASE_01",
+      "query": "Em quan tâm đến NLP và mô hình ngôn ngữ lớn LLM",
+      "expected_advisor_field": "Xử lý Ngôn ngữ Tự nhiên (NLP)",
+      "top_match": "PGS.TS. Nguyễn Văn A",
+      "compatibility_score": 0.88,
+      "quota_valid": true,
+      "latency_ms": 115.2,
+      "passed": true
+    },
+    {
+      "id": "CASE_02",
+      "query": "Muốn nghiên cứu đề tài Recommender Systems và Graph Neural Networks",
+      "expected_advisor_field": "Khai phá Dữ liệu & Hệ khuyến nghị",
+      "top_match": "TS. Trần Thị B",
+      "compatibility_score": 0.92,
+      "quota_valid": true,
+      "latency_ms": 108.4,
+      "passed": true
+    },
+    {
+      "id": "CASE_03",
+      "query": "Kiến trúc hệ thống Microservices trên Docker và Kubernetes",
+      "expected_advisor_field": "Kỹ thuật Phần mềm & Cloud",
+      "top_match": "TS. Lê Hoàng C",
+      "compatibility_score": 0.90,
+      "quota_valid": true,
+      "latency_ms": 122.1,
+      "passed": true
+    },
+    {
+      "id": "CASE_04",
+      "query": "Nhận diện bệnh qua ảnh y tế với YOLO và Computer Vision",
+      "expected_advisor_field": "Thị giác Máy tính",
+      "top_match": "PGS.TS. Phạm Minh D",
+      "compatibility_score": 0.94,
+      "quota_valid": true,
+      "latency_ms": 119.8,
+      "passed": true
+    }
+  ]
+}

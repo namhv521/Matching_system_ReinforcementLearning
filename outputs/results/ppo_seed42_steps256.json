@@ -1,0 +1,42 @@
+{
+  "algorithm": "ppo",
+  "timesteps": 256,
+  "additional_timesteps": 256,
+  "seed": 42,
+  "theses": 198,
+  "advisors": 39,
+  "training_mode": "cumulative_milestones",
+  "split": {
+    "strategy": "all_pre_2025_plus_75pct_2025; remaining_2025_half_validation_half_test",
+    "cutoff_year": 2025,
+    "seed": 42,
+    "rows": {
+      "train": 156,
+      "validation": 20,
+      "test": 22
+    },
+    "student_groups": {
+      "train": 150,
+      "validation": 20,
+      "test": 21
+    }
+  },
+  "train_metrics": {
+    "total_reward": 1.058386,
+    "mean_compatibility": 0.006785,
+    "load_variance": 0.0,
+    "invalid_proposals": 0
+  },
+  "validation_metrics": {
+    "total_reward": 0.227202,
+    "mean_compatibility": 0.013234,
+    "load_variance": 0.249836,
+    "invalid_proposals": 0
+  },
+  "test_metrics": {
+    "total_reward": 0.185726,
+    "mean_compatibility": 0.010119,
+    "load_variance": 0.245891,
+    "invalid_proposals": 0
+  }
+}

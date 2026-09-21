@@ -22,7 +22,7 @@ Xây dựng hệ thống phân bổ sinh viên–giảng viên hướng dẫn kh
 2. Tạo text representation cho thesis/advisor và compatibility matrix cosine/TF-IDF.
 3. Matching environment: mỗi bước xử lý một student; action là advisor; quota là hard constraint.
 4. Observation gồm student embedding/feature, advisor compatibility, remaining capacity và current loads.
-5. Reward: compatibility + preference − load imbalance − invalid assignment penalty.
+5. Reward: compatibility + preference − load imbalance − invalid assignment `penalty.
 6. Train PPO; train DQN trên cùng environment/protocol để đối chứng.
 7. So sánh Random, Greedy, Gale–Shapley/SPA, PPO, DQN bằng compatibility, quota violations, load variance và historical Recall@K.
 8. Lưu seed, config, metrics và checkpoint; chỉ deploy model qua evaluation gate.

@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: kltn-matching
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: CORS_ORIGINS
+        value: '["https://kltn-matching.onrender.com"]'

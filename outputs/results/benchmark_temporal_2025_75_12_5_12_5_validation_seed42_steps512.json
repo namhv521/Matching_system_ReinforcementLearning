@@ -1,0 +1,90 @@
+{
+  "split": "temporal_2025_75_12_5_12_5",
+  "evaluation_split": "validation",
+  "split_metadata": {
+    "strategy": "all_pre_2025_plus_75pct_2025; remaining_2025_half_validation_half_test",
+    "cutoff_year": 2025,
+    "seed": 42,
+    "rows": {
+      "train": 156,
+      "validation": 20,
+      "test": 22
+    },
+    "student_groups": {
+      "train": 150,
+      "validation": 20,
+      "test": 21
+    }
+  },
+  "train_students": 156,
+  "validation_students": 20,
+  "test_students": 22,
+  "advisors": 39,
+  "timesteps": 512,
+  "seed": 42,
+  "results": [
+    {
+      "assigned": 20,
+      "mean_compatibility": 0.018001,
+      "load_variance": 0.249836,
+      "quota_violations": 0,
+      "historical_top1_accuracy": 0.0,
+      "algorithm": "random",
+      "invalid_proposals": 0
+    },
+    {
+      "assigned": 20,
+      "mean_compatibility": 0.061767,
+      "load_variance": 0.249836,
+      "quota_violations": 0,
+      "historical_top1_accuracy": 0.0,
+      "algorithm": "greedy",
+      "invalid_proposals": 0
+    },
+    {
+      "assigned": 20,
+      "mean_compatibility": 0.065601,
+      "load_variance": 0.249836,
+      "quota_violations": 0,
+      "historical_top1_accuracy": 0.0,
+      "algorithm": "exact",
+      "invalid_proposals": 0
+    },
+    {
+      "assigned": 20,
+      "mean_compatibility": 0.061788,
+      "load_variance": 0.249836,
+      "quota_violations": 0,
+      "historical_top1_accuracy": 0.0,
+      "algorithm": "gale_shapley",
+      "invalid_proposals": 0
+    },
+    {
+      "assigned": 20,
+      "mean_compatibility": 0.061788,
+      "load_variance": 0.249836,
+      "quota_violations": 0,
+      "historical_top1_accuracy": 0.0,
+      "algorithm": "spa_deferred_acceptance",
+      "invalid_proposals": 0
+    },
+    {
+      "assigned": 20,
+      "mean_compatibility": 0.016745,
+      "load_variance": 0.249836,
+      "quota_violations": 0,
+      "historical_top1_accuracy": 0.1,
+      "algorithm": "ppo_maskable",
+      "invalid_proposals": 0
+    },
+    {
+      "assigned": 20,
+      "mean_compatibility": 0.063387,
+      "load_variance": 0.249836,
+      "quota_violations": 0,
+      "historical_top1_accuracy": 0.0,
+      "algorithm": "dqn",
+      "invalid_proposals": 19
+    }
+  ]
+}

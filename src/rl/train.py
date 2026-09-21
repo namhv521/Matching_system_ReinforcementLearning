@@ -8,8 +8,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from stable_baselines3 import DQN
-from sb3_contrib import MaskablePPO
+from stable_baselines3 import A2C, DQN
+from sb3_contrib import MaskablePPO, QRDQN
 
 from src.environment.gym_matching_env import GymMatchingEnv
 from src.environment.matching_core import build_compatibility
@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CURATED = ROOT / "data" / "curated"
 RESULTS = ROOT / "outputs" / "results"
 MODELS = ROOT / "outputs" / "models"
+SUPPORTED_ALGORITHMS = ("ppo", "a2c", "dqn", "qrdqn")
 
 
 def load_environments(seed: int) -> tuple[dict[str, GymMatchingEnv], dict[str, pd.DataFrame], pd.DataFrame, dict]:
@@ -52,7 +53,26 @@ def evaluate(model, env: GymMatchingEnv) -> dict:
         observation, step_reward, done, _, info = env.step(action)
         reward += step_reward
         compatibility.append(info["compatibility"])
-    return {"total_reward": round(float(reward), 6), "mean_compatibility": round(float(np.mean(compatibility)), 6), "load_variance": round(float(np.var(env.core.loads)), 6), "invalid_proposals": env.invalid_proposals}
+    return {
+        "total_reward": round(float(reward), 6),
+        "mean_compatibility": round(float(np.mean(compatibility)), 6),
+        "load_variance": round(float(np.var(env.core.loads)), 6),
+        "quota_violations": int(np.maximum(env.core.loads - env.core.capacities, 0).sum()),
+        "invalid_proposals": env.invalid_proposals,
+    }
+
+
+def load_checkpoint(algorithm: str, path: Path | str, env: GymMatchingEnv | None = None):
+    path = Path(path)
+    if algorithm == "ppo":
+        return MaskablePPO.load(path, env=env)
+    elif algorithm == "a2c":
+        return A2C.load(path, env=env)
+    elif algorithm == "dqn":
+        return DQN.load(path, env=env)
+    elif algorithm == "qrdqn":
+        return QRDQN.load(path, env=env)
+    raise ValueError(f"Unsupported algorithm: {algorithm}")
 
 
 def train_milestones(algorithm: str, milestones: list[int], seed: int, verbose: int = 1) -> list[dict]:
@@ -75,11 +95,20 @@ def train_milestones(algorithm: str, milestones: list[int], seed: int, verbose: 
             "MlpPolicy", env, seed=seed, verbose=verbose,
             n_steps=256, batch_size=64,
         )
-    else:
+    elif algorithm == "a2c":
+        model = A2C("MlpPolicy", env, seed=seed, verbose=verbose, n_steps=256)
+    elif algorithm == "dqn":
         model = DQN(
             "MlpPolicy", env, seed=seed, verbose=verbose,
             learning_starts=500, buffer_size=20_000, batch_size=64,
         )
+    elif algorithm == "qrdqn":
+        model = QRDQN(
+            "MlpPolicy", env, seed=seed, verbose=verbose,
+            learning_starts=500, buffer_size=20_000, batch_size=64,
+        )
+    else:
+        raise ValueError(f"Unsupported algorithm: {algorithm}")
 
     RESULTS.mkdir(parents=True, exist_ok=True)
     MODELS.mkdir(parents=True, exist_ok=True)
@@ -120,7 +149,7 @@ def train_milestones(algorithm: str, milestones: list[int], seed: int, verbose: 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--algorithm", choices=["ppo", "dqn"], default="ppo")
+    parser.add_argument("--algorithm", choices=SUPPORTED_ALGORITHMS, default="ppo")
     parser.add_argument("--timesteps", type=int, default=None,
                         help="Single training milestone (default: 10000).")
     parser.add_argument("--milestones", type=int, nargs="+", default=None,
