@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import math
 import threading
 import time
+from collections import OrderedDict
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, ClassVar, Optional
 
 import numpy as np
 import pandas as pd
@@ -15,6 +18,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
+from backend.app.core.exceptions import CohortPersistenceError, DatabaseUnavailableError
 from backend.app.data.transformers.database_frames import advisors_dataframe, theses_dataframe
 from backend.app.core.logging import logger
 from backend.app.repositories.assignment_repository import AssignmentRepository
@@ -24,7 +28,6 @@ from src.data_pipeline.split_dataset import temporal_train_validation_test_split
 from src.environment.gym_matching_env import GymMatchingEnv
 from src.environment.matching_core import ADVISOR_TEXT_COLUMNS, _row_text, build_compatibility
 from src.rl.benchmark import baseline, deferred_acceptance, metrics, optimal_assignment
-from src.rl.train import load_checkpoint
 
 ROOT = Path(__file__).resolve().parents[3]
 DATA_DIR = settings.DATA_DIR
@@ -49,7 +52,26 @@ def overview_from_overnight(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+@dataclass(frozen=True)
+class _MatchingResources:
+    vectorizer: Any
+    advisor_vectors: Any
+    matrices: dict[str, np.ndarray]
+
+
+def _catalog_fingerprint(advisors: pd.DataFrame, theses: pd.DataFrame) -> str:
+    digest = hashlib.sha256()
+    for frame in (advisors, theses):
+        columns = [column for column in frame.columns if column not in {"created_at", "updated_at"}]
+        digest.update(frame.loc[:, columns].fillna("").astype(str).to_csv(index=False, lineterminator="\n").encode("utf-8"))
+    return digest.hexdigest()
+
+
 class MatchingService:
+    _resource_cache: ClassVar[OrderedDict[tuple[int, str, str], _MatchingResources]] = OrderedDict()
+    _resource_cache_lock: ClassVar[threading.Lock] = threading.Lock()
+    _resource_cache_limit: ClassVar[int] = 8
+
     def __init__(
         self,
         seed: int = settings.MATCHING_SEED,
@@ -67,6 +89,7 @@ class MatchingService:
         train, validation, test, self.split_metadata = temporal_train_validation_test_split(theses_df, seed=seed)
         self.frames = {"train": train, "validation": validation, "test": test}
         self.advisors_clean = advisors_df
+        self.catalog_fingerprint = _catalog_fingerprint(advisors_df, theses_df)
         self.envs: dict[str, GymMatchingEnv] = {}
         self.vectorizer = None
         self.advisor_vectors = None
@@ -85,33 +108,54 @@ class MatchingService:
         advisors = advisors_dataframe(AdvisorRepository(db).list_for_matching())
         theses = theses_dataframe(ThesisRepository(db).list_for_matching())
         if advisors.empty or theses.empty:
-            raise RuntimeError("Database-backed matching requires seeded advisors and theses.")
+            raise DatabaseUnavailableError()
         return cls(seed=seed, advisors_df=advisors, theses_df=theses)
+
+    @classmethod
+    def clear_resource_cache(cls) -> None:
+        with cls._resource_cache_lock:
+            cls._resource_cache.clear()
+
+    def _resource_key(self) -> tuple[int, str, str]:
+        return self.seed, settings.MATCHING_TEXT_BACKEND, self.catalog_fingerprint
 
     def _ensure_matching_resources(self) -> None:
         if self.envs:
             return
-        train_matrix, self.vectorizer = build_compatibility(
-            self.frames["train"], self.advisors_clean, backend=settings.MATCHING_TEXT_BACKEND
-        )
-        matrices = {"train": train_matrix}
-        for split in ("validation", "test"):
-            matrices[split], _ = build_compatibility(
-                self.frames[split],
-                self.advisors_clean,
-                vectorizer=self.vectorizer,
-                fit=False,
-                backend=settings.MATCHING_TEXT_BACKEND,
-            )
-        for split, matrix in matrices.items():
+        key = self._resource_key()
+        with self._resource_cache_lock:
+            resources = self._resource_cache.get(key)
+            if resources is None:
+                train_matrix, vectorizer = build_compatibility(
+                    self.frames["train"], self.advisors_clean, backend=settings.MATCHING_TEXT_BACKEND
+                )
+                matrices = {"train": train_matrix}
+                for split in ("validation", "test"):
+                    matrices[split], _ = build_compatibility(
+                        self.frames[split],
+                        self.advisors_clean,
+                        vectorizer=vectorizer,
+                        fit=False,
+                        backend=settings.MATCHING_TEXT_BACKEND,
+                    )
+                for matrix in matrices.values():
+                    matrix.setflags(write=False)
+                advisor_vectors = vectorizer.transform(_row_text(self.advisors_clean, ADVISOR_TEXT_COLUMNS))
+                resources = _MatchingResources(vectorizer, advisor_vectors, matrices)
+                self._resource_cache[key] = resources
+                if len(self._resource_cache) > self._resource_cache_limit:
+                    self._resource_cache.popitem(last=False)
+            else:
+                self._resource_cache.move_to_end(key)
+        self.vectorizer = resources.vectorizer
+        self.advisor_vectors = resources.advisor_vectors
+        for split, matrix in resources.matrices.items():
             capacity = math.ceil(len(self.frames[split]) / len(self.advisors_clean))
             self.envs[split] = GymMatchingEnv(
                 matrix,
                 np.full(len(self.advisors_clean), capacity, dtype=np.int32),
             )
             self.envs[split].reset(seed=self.seed)
-        advisor_texts = _row_text(self.advisors_clean, ADVISOR_TEXT_COLUMNS)
-        self.advisor_vectors = self.vectorizer.transform(advisor_texts)
 
     def _capacity_for(self, split: str) -> int:
         return math.ceil(len(self.frames[split]) / len(self.advisors_clean))
@@ -220,6 +264,8 @@ class MatchingService:
                 if not ppo_path.exists():
                     raise FileNotFoundError(f"Mô hình PPO checkpoint không tìm thấy tại {ppo_path}")
                 if self.ppo_model is None:
+                    from src.rl.train import load_checkpoint
+
                     self.ppo_model = load_checkpoint("ppo", ppo_path, env=env)
                 obs, info = env.reset(seed=self.seed)
                 actions = []
@@ -288,8 +334,9 @@ class MatchingService:
                     "accuracy_vs_historical": float(summary.get("accuracy_vs_historical")) if summary.get("accuracy_vs_historical") is not None else None,
                 }
                 repo.save_cohort_run(run_data, assignments, workload)
-            except Exception as exc:
-                logger.warning(f"Could not persist cohort run to database: {exc}")
+            except Exception:
+                logger.warning("Could not persist cohort run to database.")
+                raise CohortPersistenceError() from None
 
         return {
             "algorithm": algorithm,
@@ -332,7 +379,7 @@ class MatchingService:
 def get_matching_service(db: Session) -> MatchingService:
     try:
         return MatchingService.from_session(db)
-    except (RuntimeError, SQLAlchemyError):
+    except (DatabaseUnavailableError, SQLAlchemyError):
         if settings.ALLOW_FILE_FALLBACK:
             return MatchingService()
-        raise
+        raise DatabaseUnavailableError() from None

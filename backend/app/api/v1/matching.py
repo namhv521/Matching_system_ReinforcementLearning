@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from backend.app.api.dependencies import get_matching_svc
+from backend.app.core.exceptions import AppException
 from backend.app.db.session import get_db
 from backend.app.repositories.assignment_repository import AssignmentRepository
 from backend.app.schemas.matching import (
@@ -37,6 +38,8 @@ def match_cohort(
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+    except AppException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Phân bổ thất bại: {exc}")
 

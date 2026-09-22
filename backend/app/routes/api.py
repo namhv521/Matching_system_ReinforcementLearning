@@ -7,7 +7,10 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from backend.app.api.dependencies import get_matching_svc
+from backend.app.api.dependencies import get_analytics_svc
+from backend.app.core.exceptions import AppException
 from backend.app.db.session import get_db
+from backend.app.services.analytics_service import AnalyticsService
 from backend.app.services.matching_service import MatchingService
 
 router = APIRouter(prefix="/api", tags=["Matching Decision Support"])
@@ -31,12 +34,12 @@ def get_overview(svc: MatchingService = Depends(get_matching_svc)) -> dict[str, 
 
 
 @router.get("/benchmarks")
-def get_benchmarks(svc: MatchingService = Depends(get_matching_svc)) -> list[dict[str, Any]]:
+def get_benchmarks(svc: AnalyticsService = Depends(get_analytics_svc)) -> list[dict[str, Any]]:
     return svc.get_benchmarks()
 
 
 @router.get("/training-curves")
-def get_training_curves(svc: MatchingService = Depends(get_matching_svc)) -> dict[str, Any]:
+def get_training_curves(svc: AnalyticsService = Depends(get_analytics_svc)) -> dict[str, Any]:
     return svc.get_training_curves()
 
 
@@ -71,6 +74,8 @@ def match_cohort(
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+    except AppException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Phân bổ thất bại: {exc}")
 

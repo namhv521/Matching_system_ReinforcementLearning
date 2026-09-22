@@ -28,7 +28,7 @@ class ThesisRepository:
         return self.db.scalars(stmt).first()
 
     def list_for_matching(self) -> List[Thesis]:
-        stmt = select(Thesis).order_by(Thesis.created_at, Thesis.record_id)
+        stmt = select(Thesis).order_by(Thesis.source_ordinal, Thesis.record_id)
         return list(self.db.scalars(stmt).all())
 
     def list_theses(

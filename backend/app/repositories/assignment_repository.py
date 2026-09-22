@@ -22,21 +22,21 @@ class AssignmentRepository:
         assignments: List[dict],
         workloads: List[dict],
     ) -> CohortRun:
-        cohort_run = CohortRun(**run_data)
-        self.db.add(cohort_run)
-        self.db.flush()
+        try:
+            cohort_run = CohortRun(**run_data)
+            self.db.add(cohort_run)
+            self.db.flush()
 
-        for a in assignments:
-            item = AssignmentRecord(cohort_run_id=cohort_run.id, **a)
-            self.db.add(item)
-
-        for w in workloads:
-            wl = AdvisorWorkloadRecord(cohort_run_id=cohort_run.id, **w)
-            self.db.add(wl)
-
-        self.db.commit()
-        self.db.refresh(cohort_run)
-        return cohort_run
+            for assignment in assignments:
+                self.db.add(AssignmentRecord(cohort_run_id=cohort_run.id, **assignment))
+            for workload in workloads:
+                self.db.add(AdvisorWorkloadRecord(cohort_run_id=cohort_run.id, **workload))
+            self.db.commit()
+            self.db.refresh(cohort_run)
+            return cohort_run
+        except Exception:
+            self.db.rollback()
+            raise
 
     def get_cohort_run(self, run_id: str) -> Optional[CohortRun]:
         stmt = (

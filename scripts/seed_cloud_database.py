@@ -119,8 +119,8 @@ def seed_public_database(session: Session, public_dir: Path, results_dir: Path) 
     courses = _read_csv(public_dir / "courses.csv")
 
     with session.begin():
-        for row in advisors:
-            _upsert(session, Advisor, {**row, "skill_count": _int(row["skill_count"]), "publication_evidence_count": _int(row["publication_evidence_count"])})
+        for source_ordinal, row in enumerate(advisors):
+            _upsert(session, Advisor, {**row, "source_ordinal": source_ordinal, "skill_count": _int(row["skill_count"]), "publication_evidence_count": _int(row["publication_evidence_count"])})
         for row in lecturers:
             _upsert(session, Lecturer, row)
         for row in skills:
@@ -136,7 +136,7 @@ def seed_public_database(session: Session, public_dir: Path, results_dir: Path) 
                 (AdvisorSkillEvidence.advisor_id == data["advisor_id"], AdvisorSkillEvidence.skill == data["skill"]),
                 data,
             )
-        for row in theses:
+        for source_ordinal, row in enumerate(theses):
             data = {
                 key: value
                 for key, value in row.items()
@@ -145,6 +145,7 @@ def seed_public_database(session: Session, public_dir: Path, results_dir: Path) 
             data["completion_year"] = _int(data["completion_year"])
             data["thesis_grade"] = _float(data.get("thesis_grade"))
             data["advisor_match_score"] = _float(data.get("advisor_match_score"), 0.0)
+            data["source_ordinal"] = source_ordinal
             _upsert(session, Thesis, data)
             _upsert(
                 session,

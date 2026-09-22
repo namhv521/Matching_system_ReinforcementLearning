@@ -12,6 +12,7 @@ class Thesis(Base, TimestampMixin):
     __tablename__ = "theses"
 
     record_id: Mapped[str] = mapped_column(String(100), primary_key=True, index=True)
+    source_ordinal: Mapped[int] = mapped_column(Integer, nullable=False, default=0, index=True)
     student_id: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, index=True)
     student_name: Mapped[Optional[str]] = mapped_column(String(150), nullable=True)
     major: Mapped[str] = mapped_column(String(150), nullable=False, index=True)

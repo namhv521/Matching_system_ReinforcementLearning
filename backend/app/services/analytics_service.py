@@ -4,9 +4,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Dict, List
 from sqlalchemy import func, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
+from backend.app.core.exceptions import DatabaseUnavailableError
 from backend.app.data.loaders.file_loader import FileDataLoader
 from backend.app.models.advisor import Advisor
 from backend.app.models.thesis import Thesis
@@ -44,7 +46,10 @@ class AnalyticsService:
         )
 
     def get_benchmarks(self) -> List[Dict[str, Any]]:
-        db_records = self.bench_repo.list_benchmarks()
+        try:
+            db_records = self.bench_repo.list_benchmarks()
+        except SQLAlchemyError:
+            raise DatabaseUnavailableError() from None
         if db_records:
             return [
                 {
@@ -60,10 +65,13 @@ class AnalyticsService:
                 }
                 for r in db_records
             ]
-        return self._matching_service().get_benchmarks()
+        return MatchingService().get_benchmarks() if settings.ALLOW_FILE_FALLBACK else []
 
     def get_training_curves(self) -> Dict[str, List[Dict[str, Any]]]:
-        db_curves = self.bench_repo.get_training_curves()
+        try:
+            db_curves = self.bench_repo.get_training_curves()
+        except SQLAlchemyError:
+            raise DatabaseUnavailableError() from None
         if db_curves:
             out = {}
             for algo, points in db_curves.items():
@@ -79,7 +87,7 @@ class AnalyticsService:
                     for p in points
                 ]
             return out
-        return self._matching_service().get_training_curves()
+        return MatchingService().get_training_curves() if settings.ALLOW_FILE_FALLBACK else {}
 
     def get_figures_list(self) -> List[FigureItem]:
         return [

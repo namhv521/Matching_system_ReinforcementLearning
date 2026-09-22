@@ -33,7 +33,7 @@ class AdvisorRepository:
         return self.db.scalars(stmt).first()
 
     def list_for_matching(self) -> List[Advisor]:
-        stmt = select(Advisor).order_by(Advisor.created_at, Advisor.advisor_id)
+        stmt = select(Advisor).order_by(Advisor.source_ordinal, Advisor.advisor_id)
         return list(self.db.scalars(stmt).all())
 
     def list_advisors(

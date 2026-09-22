@@ -76,6 +76,24 @@ class DataIngestionError(AppException):
         )
 
 
+class DatabaseUnavailableError(AppException):
+    def __init__(self):
+        super().__init__(
+            message="Database is temporarily unavailable.",
+            code="DATABASE_UNAVAILABLE",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+
+
+class CohortPersistenceError(AppException):
+    def __init__(self):
+        super().__init__(
+            message="Unable to save cohort matching result.",
+            code="COHORT_PERSISTENCE_FAILED",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppException)
     async def app_exception_handler(request: Request, exc: AppException):
