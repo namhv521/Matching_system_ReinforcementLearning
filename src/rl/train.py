@@ -1,6 +1,7 @@
 """Train a PPO or DQN student-advisor matching policy from curated data."""
 import argparse
 import json
+import os
 import math
 import os
 import random
@@ -16,7 +17,7 @@ from src.environment.matching_core import build_compatibility
 from src.data_pipeline.split_dataset import temporal_train_validation_test_split
 
 ROOT = Path(__file__).resolve().parents[2]
-CURATED = ROOT / "data" / "curated"
+CURATED = Path(os.environ.get("DATA_DIR", ROOT / "data" / "curated"))
 RESULTS = ROOT / "outputs" / "results"
 MODELS = ROOT / "outputs" / "models"
 SUPPORTED_ALGORITHMS = ("ppo", "a2c", "dqn", "qrdqn")

@@ -73,7 +73,7 @@ Kết quả seed 42 đã kiểm chứng:
 | DQN, 2M | 0.048941 | 13 | Không qua gate |
 | QR-DQN, 2M | 0.064199 | 17 | Không qua gate |
 
-PPO đạt validation tốt nhất `0.055579` ở checkpoint 1M, tương đương khoảng 84,7% Exact. Điểm giảm ở 2M là bằng chứng cần early stopping theo validation, không phải lý do để tiếp tục train vô hạn. Kết luận đa-seed được cập nhật sau khi các seed bổ sung hoàn tất; không dùng test để điều chỉnh model.
+PPO seed 42 đạt validation tốt nhất `0.055579` ở checkpoint 1M, tương đương khoảng 84,7% Exact. Điểm giảm ở 2M là bằng chứng cần early stopping theo validation, không phải lý do để tiếp tục train vô hạn. Một lần chạy độc lập với seed 123 được dừng tại checkpoint PPO 1M sau khi đã lưu artifact: compatibility validation `0.022589`, `0` invalid proposal và `0` quota violation. Kết quả này xác nhận tính an toàn của action masking nhưng cũng cho thấy độ nhạy theo split/seed; vì vậy không có cơ sở nâng PPO thay Exact. Test không được dùng để điều chỉnh model.
 
 ## 7. Model governance và vòng đời
 
@@ -88,7 +88,7 @@ Vòng đời đề xuất:
 
 ## 8. Phân tích dữ liệu và trực quan hóa
 
-`src/analysis/experiment_analysis.py` đọc mọi file `overnight_seed*_steps*.json`, kiểm tra metric bắt buộc và tổng hợp mean, sample standard deviation, safe-run rate, invalid proposal và quota violation theo model. `scripts/generate_figures.py` dùng trực tiếp kết quả này, không còn hard-code các cột so sánh.
+`src/analysis/experiment_analysis.py` đọc mọi file thí nghiệm hoàn chỉnh `overnight_seed*_steps*.json`, kiểm tra metric bắt buộc và tổng hợp mean, sample standard deviation, safe-run rate, invalid proposal và quota violation theo model. `scripts/generate_figures.py` dùng trực tiếp kết quả này, không còn hard-code các cột so sánh. Artifact PPO seed 123 được giữ riêng vì run được dừng có chủ đích tại checkpoint 1M, không trộn một run dở dang vào bảng so sánh đầy đủ 2M.
 
 Các hình được sinh ở 300 DPI:
 
@@ -119,16 +119,14 @@ Các kiểm chứng đã chạy trong phiên hoàn thiện:
 
 | Hạng mục | Kết quả hiện tại |
 | --- | --- |
-| Python baseline | 20 tests pass |
-| Test phân tích mới | 3 tests pass |
-| Backend dashboard API | 3 tests pass |
+| Toàn bộ Python | 26 tests pass |
 | Frontend Vitest | 5 tests pass |
 | Frontend production build | Thành công |
 | FastAPI `/health` và `/` | HTTP 200 |
 | Public dataset | 198 dòng; 0 ID/name giao với curated |
 | Figure generation | 6 PNG được tạo; figure 2, 3, 6 đọc artifact/dataset thật |
 
-Số liệu cuối, Docker smoke test, CI URL, deployment URL và remote commit SHA chỉ được ghi là hoàn tất sau khi có bằng chứng tương ứng.
+Remote branch đã được xác minh tại `namhv521/sutudy`, nhánh `KLTN`. Docker smoke test, CI cuối và deployment URL chỉ được ghi là hoàn tất sau khi có bằng chứng tương ứng.
 
 ## Hạn chế và hướng tiếp theo
 

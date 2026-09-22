@@ -10,6 +10,8 @@ jobs:
   test:
     name: Run Unit & Integration Tests
     runs-on: ubuntu-latest
+    env:
+      DATA_DIR: data/public
 
     steps:
       - name: Checkout Code
