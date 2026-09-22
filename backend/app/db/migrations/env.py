@@ -1,13 +1,14 @@
-import os
 import sys
 from logging.config import fileConfig
+from pathlib import Path
 
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
-# Add project root to sys.path
-sys.path.insert(0, os.path.abspath("."))
+# Make Alembic work from the repository root and deployment working directory.
+ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(ROOT))
 
 from backend.app.core.config import settings
 from backend.app.db.base import Base
