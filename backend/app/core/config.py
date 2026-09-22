@@ -4,10 +4,27 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any, List, Union
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
+
+
+def normalize_database_url(value: str) -> str:
+    """Use SQLAlchemy's psycopg dialect and require TLS for PostgreSQL."""
+    url = value.strip()
+    if url.startswith("postgres://"):
+        url = f"postgresql://{url.removeprefix('postgres://')}"
+    if url.startswith("postgresql://"):
+        url = f"postgresql+psycopg://{url.removeprefix('postgresql://')}"
+    if not url.startswith("postgresql+psycopg://"):
+        return url
+
+    parsed = urlsplit(url)
+    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    query["sslmode"] = "require"
+    return urlunsplit(parsed._replace(query=urlencode(query)))
 
 
 class Settings(BaseSettings):
@@ -29,6 +46,11 @@ class Settings(BaseSettings):
         default=f"sqlite:///{ROOT_DIR / 'data' / 'storage' / 'kltn_matching.db'}",
         description="SQLAlchemy Database Connection URI (SQLite for local dev, PostgreSQL for production)",
     )
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def normalize_database_connection(cls, value: str) -> str:
+        return normalize_database_url(value)
 
     # MongoDB Settings (Optional / Pre-configured)
     MONGODB_ENABLED: bool = False

@@ -12,7 +12,7 @@ from backend.app.core.config import settings
 from backend.app.core.exceptions import register_exception_handlers
 from backend.app.core.logging import logger
 from backend.app.core.security import SecurityHeadersMiddleware
-from backend.app.db.session import init_db
+from backend.app.db import session
 
 ROOT = settings.ROOT_PATH
 FRONTEND_DIR = settings.FRONTEND_DIR
@@ -25,9 +25,9 @@ FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 async def lifespan(app: FastAPI):
     logger.info("Initializing application resources...")
     try:
-        init_db()
-    except Exception as exc:
-        logger.error(f"Failed to initialize database: {exc}")
+        session.init_db()
+    except Exception:
+        logger.error("Failed to initialize database.")
     yield
     logger.info("Shutting down application...")
 
@@ -60,11 +60,10 @@ app.include_router(v1_router, prefix="/api")
 @app.get("/health", tags=["System Health"])
 def health_check():
     return {
-        "status": "ok",
         "app_name": settings.APP_NAME,
         "version": settings.APP_VERSION,
         "environment": settings.APP_ENV,
-        "database": "connected",
+        **session.database_health(),
     }
 
 
