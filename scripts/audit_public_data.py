@@ -1,10 +1,15 @@
 """Detect original student identifiers in public CSV payloads."""
 from __future__ import annotations
 
+import argparse
 import csv
 import re
+import sys
 import unicodedata
 from pathlib import Path
+
+
+PUBLIC_IDENTITY_FILES = {"advisor_skill_evidence.csv", "advisors.csv", "lecturers.csv"}
 
 
 def _normalize(value: str) -> str:
@@ -25,21 +30,37 @@ def _student_identifiers(curated_dir: Path) -> dict[str, str]:
 
 
 def audit_public_data(public_dir: Path, curated_dir: Path) -> list[str]:
-    """Return findings where public CSV strings contain original student data."""
+    """Return findings where public CSV strings contain original student data.
+
+    Name-only matches in public advisor/lecturer identity and publication evidence
+    files are ambiguous, so only original student IDs are reported there.
+    """
     identifiers = _student_identifiers(curated_dir)
     findings: list[str] = []
-    for path in (public_dir / "theses.csv",):
+    for path in sorted(public_dir.glob("*.csv")):
         with path.open(encoding="utf-8-sig", newline="") as handle:
             for line_number, row in enumerate(csv.DictReader(handle), start=2):
                 for column, value in row.items():
                     normalized = _normalize(value or "")
                     for identifier, label in identifiers.items():
+                        if label.startswith("student_name=") and path.name in PUBLIC_IDENTITY_FILES:
+                            continue
                         if identifier and identifier in normalized:
                             findings.append(f"{path.name}:{line_number}:{column} contains {label}")
     return findings
 
 
-if __name__ == "__main__":
+def main(argv: list[str] | None = None) -> int:
+    sys.stdout.reconfigure(encoding="utf-8")
     root = Path(__file__).resolve().parents[1]
-    leaks = audit_public_data(root / "data" / "public", root / "data" / "curated")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--public-dir", type=Path, default=root / "data" / "public")
+    parser.add_argument("--curated-dir", type=Path, default=root / "data" / "curated")
+    args = parser.parse_args(argv)
+    leaks = audit_public_data(args.public_dir, args.curated_dir)
     print("\n".join(leaks) if leaks else "No public data leaks found.")
+    return int(bool(leaks))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

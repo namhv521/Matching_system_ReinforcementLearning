@@ -21,7 +21,7 @@ def sanitize_theses(rows: list[dict[str, str]]) -> list[dict[str, str]]:
         item = dict(row)
         item["student_id"] = f"STU-{index:04d}"
         item["student_name"] = f"Sinh viên {index:04d}"
-        item["source_file"] = sanitize_source_file(item.get("source_file", ""), item.get("record_id", f"thesis-{index:04d}"))
+        item["source_file"] = sanitize_source_file(item.get("source_file", ""), item.get("record_id") or f"thesis-{index:04d}")
         sanitized.append(item)
     return sanitized
 
