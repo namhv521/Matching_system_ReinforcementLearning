@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from backend.app.db.base import Base
 import backend.app.models  # noqa: F401
+from backend.app.models.advisor import Advisor
 from backend.app.models.benchmark import BenchmarkMetricRecord
 from scripts.seed_cloud_database import seed_public_database
 
@@ -35,3 +36,19 @@ def test_seed_is_idempotent_and_preserves_unrelated_rows():
         assert second["advisors"] == 39
         assert db_session.get(BenchmarkMetricRecord, "user-note") is not None
         assert db_session.scalars(select(BenchmarkMetricRecord)).all()
+
+
+def test_seed_restores_snapshot_owned_rows():
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as db_session:
+        seed_public_database(db_session, PUBLIC, RESULTS)
+        advisor = db_session.get(Advisor, "ts-pham-xuan-lam")
+        assert advisor is not None
+        advisor.canonical_name = "Changed locally"
+        db_session.commit()
+
+        seed_public_database(db_session, PUBLIC, RESULTS)
+
+        assert db_session.get(Advisor, "ts-pham-xuan-lam").canonical_name == "TS Phạm Xuân Lâm"

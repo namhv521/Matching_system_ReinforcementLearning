@@ -16,13 +16,6 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-class Vector(sa.types.UserDefinedType):
-    """Dimensionless pgvector column reserved for a later embedding benchmark."""
-
-    def get_col_spec(self, **_: object) -> str:
-        return "vector"
-
-
 def _timestamps() -> tuple[sa.Column, sa.Column]:
     return (
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("CURRENT_TIMESTAMP")),
@@ -131,7 +124,6 @@ def upgrade() -> None:
         sa.Column("advisor_match_score", sa.Float(), nullable=False, server_default="1"),
         sa.Column("primary_role", sa.String(length=100), nullable=False),
         sa.Column("secondary_roles", sa.String(length=255)),
-        sa.Column("search_embedding", Vector(), nullable=True),
         *_timestamps(),
     )
     for name, column in (
