@@ -1,5 +1,4 @@
 """FastAPI route dependencies."""
-from typing import Generator
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
@@ -18,8 +17,8 @@ def get_thesis_svc(db: Session = Depends(get_db)) -> ThesisService:
     return ThesisService(db)
 
 
-def get_matching_svc() -> MatchingService:
-    return get_matching_service()
+def get_matching_svc(db: Session = Depends(get_db)) -> MatchingService:
+    return get_matching_service(db)
 
 
 def get_analytics_svc(db: Session = Depends(get_db)) -> AnalyticsService:

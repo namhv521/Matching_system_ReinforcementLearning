@@ -32,6 +32,10 @@ class AdvisorRepository:
         stmt = select(Advisor).where(Advisor.advisor_name == advisor_name)
         return self.db.scalars(stmt).first()
 
+    def list_for_matching(self) -> List[Advisor]:
+        stmt = select(Advisor).order_by(Advisor.created_at, Advisor.advisor_id)
+        return list(self.db.scalars(stmt).all())
+
     def list_advisors(
         self,
         department: Optional[str] = None,

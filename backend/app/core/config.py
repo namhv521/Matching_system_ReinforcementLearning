@@ -84,6 +84,7 @@ class Settings(BaseSettings):
     # Machine Learning & Decision Support
     MATCHING_SEED: int = 42
     MATCHING_TEXT_BACKEND: str = "tfidf"
+    ALLOW_FILE_FALLBACK: bool = False
 
     # Directory Paths
     ROOT_PATH: Path = ROOT_DIR

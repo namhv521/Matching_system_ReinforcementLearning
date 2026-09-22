@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import math
 import threading
 import time
 from pathlib import Path
@@ -10,14 +11,20 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
+from backend.app.data.transformers.database_frames import advisors_dataframe, theses_dataframe
 from backend.app.core.logging import logger
 from backend.app.repositories.assignment_repository import AssignmentRepository
+from backend.app.repositories.advisor_repository import AdvisorRepository
+from backend.app.repositories.thesis_repository import ThesisRepository
+from src.data_pipeline.split_dataset import temporal_train_validation_test_split
+from src.environment.gym_matching_env import GymMatchingEnv
 from src.environment.matching_core import ADVISOR_TEXT_COLUMNS, _row_text, build_compatibility
 from src.rl.benchmark import baseline, deferred_acceptance, metrics, optimal_assignment
-from src.rl.train import load_checkpoint, load_environments
+from src.rl.train import load_checkpoint
 
 ROOT = Path(__file__).resolve().parents[3]
 DATA_DIR = settings.DATA_DIR
@@ -43,15 +50,26 @@ def overview_from_overnight(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 class MatchingService:
-    def __init__(self, seed: int = settings.MATCHING_SEED):
+    def __init__(
+        self,
+        seed: int = settings.MATCHING_SEED,
+        advisors_df: pd.DataFrame | None = None,
+        theses_df: pd.DataFrame | None = None,
+    ):
         self.seed = seed
-        self.advisors_df = pd.read_csv(DATA_DIR / "advisors.csv")
-        self.theses_df = pd.read_csv(DATA_DIR / "theses.csv")
-        self.envs, self.frames, self.advisors_clean, self.split_metadata = load_environments(seed)
-
-        _, self.vectorizer = build_compatibility(self.frames["train"], self.advisors_clean, backend="tfidf")
-        advisor_texts = _row_text(self.advisors_clean, ADVISOR_TEXT_COLUMNS)
-        self.advisor_vectors = self.vectorizer.transform(advisor_texts)
+        if advisors_df is None or theses_df is None:
+            if not settings.ALLOW_FILE_FALLBACK:
+                raise RuntimeError("Database-backed matching requires a request database session.")
+            advisors_df = pd.read_csv(DATA_DIR / "advisors.csv", encoding="utf-8-sig")
+            theses_df = pd.read_csv(DATA_DIR / "theses.csv", encoding="utf-8-sig")
+        self.advisors_df = advisors_df
+        self.theses_df = theses_df
+        train, validation, test, self.split_metadata = temporal_train_validation_test_split(theses_df, seed=seed)
+        self.frames = {"train": train, "validation": validation, "test": test}
+        self.advisors_clean = advisors_df
+        self.envs: dict[str, GymMatchingEnv] = {}
+        self.vectorizer = None
+        self.advisor_vectors = None
 
         self.ppo_model = None
         self._lock = threading.Lock()
@@ -60,6 +78,43 @@ class MatchingService:
         overnight_file = RESULTS_DIR / f"overnight_seed{seed}_steps2000000.json"
         if overnight_file.exists():
             self.overnight_data = json.loads(overnight_file.read_text(encoding="utf-8"))
+
+    @classmethod
+    def from_session(cls, db: Session, seed: int = settings.MATCHING_SEED) -> "MatchingService":
+        """Build a request-scoped matching service from the application database."""
+        advisors = advisors_dataframe(AdvisorRepository(db).list_for_matching())
+        theses = theses_dataframe(ThesisRepository(db).list_for_matching())
+        if advisors.empty or theses.empty:
+            raise RuntimeError("Database-backed matching requires seeded advisors and theses.")
+        return cls(seed=seed, advisors_df=advisors, theses_df=theses)
+
+    def _ensure_matching_resources(self) -> None:
+        if self.envs:
+            return
+        train_matrix, self.vectorizer = build_compatibility(
+            self.frames["train"], self.advisors_clean, backend=settings.MATCHING_TEXT_BACKEND
+        )
+        matrices = {"train": train_matrix}
+        for split in ("validation", "test"):
+            matrices[split], _ = build_compatibility(
+                self.frames[split],
+                self.advisors_clean,
+                vectorizer=self.vectorizer,
+                fit=False,
+                backend=settings.MATCHING_TEXT_BACKEND,
+            )
+        for split, matrix in matrices.items():
+            capacity = math.ceil(len(self.frames[split]) / len(self.advisors_clean))
+            self.envs[split] = GymMatchingEnv(
+                matrix,
+                np.full(len(self.advisors_clean), capacity, dtype=np.int32),
+            )
+            self.envs[split].reset(seed=self.seed)
+        advisor_texts = _row_text(self.advisors_clean, ADVISOR_TEXT_COLUMNS)
+        self.advisor_vectors = self.vectorizer.transform(advisor_texts)
+
+    def _capacity_for(self, split: str) -> int:
+        return math.ceil(len(self.frames[split]) / len(self.advisors_clean))
 
     def get_overview(self) -> dict[str, Any]:
         model_overview = overview_from_overnight(self.overnight_data)
@@ -100,7 +155,7 @@ class MatchingService:
         return curves
 
     def get_advisors(self) -> list[dict[str, Any]]:
-        capacities = self.envs["validation"].core.capacities
+        capacities = np.full(len(self.advisors_clean), self._capacity_for("validation"), dtype=np.int32)
         advisors_list = []
         for idx, row in self.advisors_clean.iterrows():
             skill_val = row.get("skill_count", 0)
@@ -142,6 +197,7 @@ class MatchingService:
         db: Optional[Session] = None,
     ) -> dict[str, Any]:
         with self._lock:
+            self._ensure_matching_resources()
             env = self.envs.get(split, self.envs["validation"])
             frame = self.frames.get(split, self.frames["validation"])
             matrix = env.core.compatibility
@@ -245,6 +301,8 @@ class MatchingService:
         }
 
     def recommend_single(self, title: str, field: str = "", tech_stack: str = "", top_k: int = 5) -> list[dict[str, Any]]:
+        with self._lock:
+            self._ensure_matching_resources()
         query_text = f"{title} {field} {tech_stack}".strip()
         query_vector = self.vectorizer.transform([query_text])
         scores = cosine_similarity(query_vector, self.advisor_vectors)[0]
@@ -271,11 +329,10 @@ class MatchingService:
         return recommendations
 
 
-_matching_service = None
-
-
-def get_matching_service() -> MatchingService:
-    global _matching_service
-    if _matching_service is None:
-        _matching_service = MatchingService()
-    return _matching_service
+def get_matching_service(db: Session) -> MatchingService:
+    try:
+        return MatchingService.from_session(db)
+    except (RuntimeError, SQLAlchemyError):
+        if settings.ALLOW_FILE_FALLBACK:
+            return MatchingService()
+        raise

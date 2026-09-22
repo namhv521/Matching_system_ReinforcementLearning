@@ -2,10 +2,13 @@
 from __future__ import annotations
 
 from typing import Any, Optional
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
-from backend.app.services.matching_service import get_matching_service
+from backend.app.api.dependencies import get_matching_svc
+from backend.app.db.session import get_db
+from backend.app.services.matching_service import MatchingService
 
 router = APIRouter(prefix="/api", tags=["Matching Decision Support"])
 
@@ -23,26 +26,22 @@ class RecommendRequest(BaseModel):
 
 
 @router.get("/overview")
-def get_overview() -> dict[str, Any]:
-    svc = get_matching_service()
+def get_overview(svc: MatchingService = Depends(get_matching_svc)) -> dict[str, Any]:
     return svc.get_overview()
 
 
 @router.get("/benchmarks")
-def get_benchmarks() -> list[dict[str, Any]]:
-    svc = get_matching_service()
+def get_benchmarks(svc: MatchingService = Depends(get_matching_svc)) -> list[dict[str, Any]]:
     return svc.get_benchmarks()
 
 
 @router.get("/training-curves")
-def get_training_curves() -> dict[str, Any]:
-    svc = get_matching_service()
+def get_training_curves(svc: MatchingService = Depends(get_matching_svc)) -> dict[str, Any]:
     return svc.get_training_curves()
 
 
 @router.get("/advisors")
-def get_advisors() -> list[dict[str, Any]]:
-    svc = get_matching_service()
+def get_advisors(svc: MatchingService = Depends(get_matching_svc)) -> list[dict[str, Any]]:
     return svc.get_advisors()
 
 
@@ -50,21 +49,24 @@ def get_advisors() -> list[dict[str, Any]]:
 def get_theses(
     split: str = Query("validation", pattern="^(train|validation|test)$"),
     limit: int = Query(50, ge=1, le=200),
+    svc: MatchingService = Depends(get_matching_svc),
 ) -> list[dict[str, Any]]:
-    svc = get_matching_service()
     return svc.get_theses(split=split, limit=limit)
 
 
 @router.post("/match/cohort")
-def match_cohort(req: MatchCohortRequest) -> dict[str, Any]:
-    svc = get_matching_service()
+def match_cohort(
+    req: MatchCohortRequest,
+    svc: MatchingService = Depends(get_matching_svc),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
     if req.split not in ("train", "validation", "test"):
         raise HTTPException(status_code=400, detail=f"Invalid split '{req.split}'")
     valid_algos = ("exact", "ppo", "ppo_maskable", "gale_shapley", "greedy", "random")
     if req.algorithm not in valid_algos:
         raise HTTPException(status_code=400, detail=f"Invalid algorithm '{req.algorithm}'. Must be one of {valid_algos}")
     try:
-        return svc.run_cohort_matching(split=req.split, algorithm=req.algorithm)
+        return svc.run_cohort_matching(split=req.split, algorithm=req.algorithm, db=db)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
@@ -74,8 +76,7 @@ def match_cohort(req: MatchCohortRequest) -> dict[str, Any]:
 
 
 @router.post("/match/recommend")
-def recommend_advisor(req: RecommendRequest) -> dict[str, Any]:
-    svc = get_matching_service()
+def recommend_advisor(req: RecommendRequest, svc: MatchingService = Depends(get_matching_svc)) -> dict[str, Any]:
     if not req.title.strip():
         raise HTTPException(status_code=400, detail="Thesis title cannot be empty")
     recommendations = svc.recommend_single(

@@ -12,7 +12,7 @@ from backend.app.models.advisor import Advisor
 from backend.app.models.thesis import Thesis
 from backend.app.repositories.benchmark_repository import BenchmarkRepository
 from backend.app.schemas.analytics import FigureItem, OverviewResponse, OverviewSplits, SystemHealthResponse
-from backend.app.services.matching_service import get_matching_service
+from backend.app.services.matching_service import MatchingService, get_matching_service
 
 
 class AnalyticsService:
@@ -20,11 +20,13 @@ class AnalyticsService:
         self.db = db
         self.loader = loader or FileDataLoader()
         self.bench_repo = BenchmarkRepository(db)
-        self.matching_svc = get_matching_service()
+
+    def _matching_service(self) -> MatchingService:
+        return get_matching_service(self.db)
 
     def get_overview(self) -> OverviewResponse:
         # Use matching service overview for full split-aligned metrics
-        data = self.matching_svc.get_overview()
+        data = self._matching_service().get_overview()
         return OverviewResponse(
             total_theses=data["total_theses"],
             total_advisors=data["total_advisors"],
@@ -58,7 +60,7 @@ class AnalyticsService:
                 }
                 for r in db_records
             ]
-        return self.matching_svc.get_benchmarks()
+        return self._matching_service().get_benchmarks()
 
     def get_training_curves(self) -> Dict[str, List[Dict[str, Any]]]:
         db_curves = self.bench_repo.get_training_curves()
@@ -77,7 +79,7 @@ class AnalyticsService:
                     for p in points
                 ]
             return out
-        return self.matching_svc.get_training_curves()
+        return self._matching_service().get_training_curves()
 
     def get_figures_list(self) -> List[FigureItem]:
         return [

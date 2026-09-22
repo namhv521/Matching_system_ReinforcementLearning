@@ -27,6 +27,10 @@ class ThesisRepository:
         stmt = select(Thesis).where(Thesis.student_id == student_id)
         return self.db.scalars(stmt).first()
 
+    def list_for_matching(self) -> List[Thesis]:
+        stmt = select(Thesis).order_by(Thesis.created_at, Thesis.record_id)
+        return list(self.db.scalars(stmt).all())
+
     def list_theses(
         self,
         major: Optional[str] = None,

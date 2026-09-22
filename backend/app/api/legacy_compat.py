@@ -5,7 +5,8 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from backend.app.db.session import get_db
-from backend.app.services.matching_service import get_matching_service
+from backend.app.api.dependencies import get_matching_svc
+from backend.app.services.matching_service import MatchingService
 
 compat_router = APIRouter(prefix="/api", tags=["Frontend Direct Compatibility"])
 
@@ -23,26 +24,22 @@ class RecommendRequest(BaseModel):
 
 
 @compat_router.get("/overview")
-def get_overview() -> dict[str, Any]:
-    svc = get_matching_service()
+def get_overview(svc: MatchingService = Depends(get_matching_svc)) -> dict[str, Any]:
     return svc.get_overview()
 
 
 @compat_router.get("/benchmarks")
-def get_benchmarks() -> list[dict[str, Any]]:
-    svc = get_matching_service()
+def get_benchmarks(svc: MatchingService = Depends(get_matching_svc)) -> list[dict[str, Any]]:
     return svc.get_benchmarks()
 
 
 @compat_router.get("/training-curves")
-def get_training_curves() -> dict[str, Any]:
-    svc = get_matching_service()
+def get_training_curves(svc: MatchingService = Depends(get_matching_svc)) -> dict[str, Any]:
     return svc.get_training_curves()
 
 
 @compat_router.get("/advisors")
-def get_advisors() -> list[dict[str, Any]]:
-    svc = get_matching_service()
+def get_advisors(svc: MatchingService = Depends(get_matching_svc)) -> list[dict[str, Any]]:
     return svc.get_advisors()
 
 
@@ -50,8 +47,8 @@ def get_advisors() -> list[dict[str, Any]]:
 def get_theses(
     split: str = Query("validation", pattern="^(train|validation|test)$"),
     limit: int = Query(50, ge=1, le=200),
+    svc: MatchingService = Depends(get_matching_svc),
 ) -> list[dict[str, Any]]:
-    svc = get_matching_service()
     return svc.get_theses(split=split, limit=limit)
 
 
@@ -59,8 +56,8 @@ def get_theses(
 def match_cohort(
     req: MatchCohortRequest,
     db: Session = Depends(get_db),
+    svc: MatchingService = Depends(get_matching_svc),
 ) -> dict[str, Any]:
-    svc = get_matching_service()
     if req.split not in ("train", "validation", "test"):
         raise HTTPException(status_code=400, detail=f"Invalid split '{req.split}'")
     valid_algos = ("exact", "ppo", "ppo_maskable", "gale_shapley", "greedy", "random")
@@ -80,8 +77,7 @@ def match_cohort(
 
 
 @compat_router.post("/match/recommend")
-def recommend_advisor(req: RecommendRequest) -> dict[str, Any]:
-    svc = get_matching_service()
+def recommend_advisor(req: RecommendRequest, svc: MatchingService = Depends(get_matching_svc)) -> dict[str, Any]:
     if not req.title.strip():
         raise HTTPException(status_code=400, detail="Thesis title cannot be empty")
     recommendations = svc.recommend_single(
