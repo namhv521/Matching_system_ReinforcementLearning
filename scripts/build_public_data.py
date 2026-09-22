@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CURATED = ROOT / "data" / "curated"
 PUBLIC = ROOT / "data" / "public"
 PUBLIC_IDENTITY_COLUMNS = {"advisor_id", "canonical_name"}
+SENSITIVE_STRUCTURED_COLUMNS = {"email", "profile_url"}
 
 
 def sanitize_source_file(value: str, record_id: str) -> str:
@@ -41,20 +42,38 @@ def sanitize_public_evidence(value: str, student_names: list[str]) -> str:
 
     compact_value = "".join(compact)
     spans: list[tuple[int, int]] = []
+    normalized_names: set[str] = set()
     for student_name in student_names:
         normalized_name = "".join(
             character
             for character in unicodedata.normalize("NFD", student_name.casefold()).replace("đ", "d")
             if not unicodedata.combining(character) and character.isalnum()
         )
+        if not normalized_name or normalized_name in normalized_names:
+            continue
+        normalized_names.add(normalized_name)
         start = compact_value.find(normalized_name)
-        while normalized_name and start >= 0:
+        while start >= 0:
             spans.append((source_indexes[start], source_indexes[start + len(normalized_name) - 1] + 1))
             start = compact_value.find(normalized_name, start + len(normalized_name))
 
-    for start, end in reversed(sorted(spans)):
+    merged_spans: list[tuple[int, int]] = []
+    for start, end in sorted(set(spans)):
+        if merged_spans and start <= merged_spans[-1][1]:
+            merged_spans[-1] = (merged_spans[-1][0], max(end, merged_spans[-1][1]))
+        else:
+            merged_spans.append((start, end))
+    for start, end in reversed(merged_spans):
         value = f"{value[:start]}[redacted student]{value[end:]}"
     return value
+
+
+def sanitize_public_field(column: str, value: str, student_names: list[str]) -> str:
+    """Redact names while keeping optional structured fields valid."""
+    sanitized = sanitize_public_evidence(value, student_names)
+    if column in SENSITIVE_STRUCTURED_COLUMNS and sanitized != value:
+        return ""
+    return sanitized
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -84,7 +103,7 @@ def main() -> None:
         for row in rows:
             for column, value in row.items():
                 if column not in PUBLIC_IDENTITY_COLUMNS:
-                    row[column] = sanitize_public_evidence(value or "", student_names)
+                    row[column] = sanitize_public_field(column, value or "", student_names)
         _write_csv(PUBLIC / name, rows)
     shutil.copy2(CURATED / "quality_report.json", PUBLIC / "quality_report.json")
     print(f"Public deployment data written to {PUBLIC}")

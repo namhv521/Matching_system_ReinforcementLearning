@@ -88,6 +88,21 @@ def test_sanitize_public_evidence_redacts_unaccented_student_names():
     ) == '{"text": "[redacted student]"}'
 
 
+def test_sanitize_public_field_clears_leaked_profile_url():
+    assert public_builder.sanitize_public_field(
+        "profile_url",
+        "https://fit.neu.edu.vn/lecturer/cn-pham-van-linh",
+        ["Phạm Văn Linh"],
+    ) == ""
+
+
+def test_sanitize_public_evidence_merges_duplicate_and_overlapping_names():
+    assert public_builder.sanitize_public_evidence(
+        "Pham Minh Quan",
+        ["Phạm Minh Quân", "Pham Minh Quan", "Phạm Minh Qu"],
+    ) == "[redacted student]"
+
+
 def test_public_audit_detects_non_thesis_leak_without_flagging_identity_collision(tmp_path):
     public_dir, curated_dir = _privacy_fixture(tmp_path)
 
