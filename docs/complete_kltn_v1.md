@@ -125,8 +125,10 @@ Các kiểm chứng đã chạy trong phiên hoàn thiện:
 | FastAPI `/health` và `/` | HTTP 200 |
 | Public dataset | 198 dòng; 0 ID/name giao với curated |
 | Figure generation | 6 PNG được tạo; figure 2, 3, 6 đọc artifact/dataset thật |
+| GitHub Actions | CI #3 pass: 26 Python tests, frontend tests/build và Docker build |
+| Render production | `https://kltn-matching.onrender.com`; `/health` và `/` HTTP 200 |
 
-Remote branch đã được xác minh tại `namhv521/sutudy`, nhánh `KLTN`. Docker smoke test, CI cuối và deployment URL chỉ được ghi là hoàn tất sau khi có bằng chứng tương ứng.
+Remote branch đã được xác minh tại `namhv521/sutudy`, nhánh `KLTN`. Bản deploy đầu tiên thành công từ commit `c68f18a`; API báo môi trường `production`, database `connected` và dashboard tải đúng dữ liệu public.
 
 ## Hạn chế và hướng tiếp theo
 
