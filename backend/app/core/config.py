@@ -22,8 +22,12 @@ def normalize_database_url(value: str) -> str:
         return url
 
     parsed = urlsplit(url)
-    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
-    query["sslmode"] = "require"
+    query = [
+        (key, item)
+        for key, item in parse_qsl(parsed.query, keep_blank_values=True)
+        if key.lower() != "sslmode"
+    ]
+    query.append(("sslmode", "require"))
     return urlunsplit(parsed._replace(query=urlencode(query)))
 
 

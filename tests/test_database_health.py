@@ -20,6 +20,20 @@ def test_postgresql_url_requires_ssl_when_given_an_insecure_mode():
     )
 
 
+def test_postgresql_url_preserves_duplicate_parameters_and_order():
+    source = (
+        "postgresql://user:password@db.example.com/postgres?target_session_attrs=read-write"
+        "&options=-c%20statement_timeout%3D1000&options=-c%20lock_timeout%3D1000"
+        "&sslmode=disable&application_name=kltn&sslmode=allow"
+    )
+
+    assert normalize_database_url(source) == (
+        "postgresql+psycopg://user:password@db.example.com/postgres?target_session_attrs=read-write"
+        "&options=-c+statement_timeout%3D1000&options=-c+lock_timeout%3D1000"
+        "&application_name=kltn&sslmode=require"
+    )
+
+
 def test_health_is_ok_with_database(monkeypatch):
     monkeypatch.setattr(session, "probe_database", lambda: True)
 
