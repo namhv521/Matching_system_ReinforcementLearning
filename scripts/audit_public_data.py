@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 PUBLIC_IDENTITY_FILES = {"advisor_skill_evidence.csv", "advisors.csv", "lecturers.csv"}
+CANONICAL_IDENTITY_COLUMNS = {"advisor_id", "canonical_name"}
 
 
 def _normalize(value: str) -> str:
@@ -29,11 +30,24 @@ def _student_identifiers(curated_dir: Path) -> dict[str, str]:
     return identifiers
 
 
+def _is_canonical_identity_collision(
+    path: Path, column: str, row: dict[str, str | None], identifier: str
+) -> bool:
+    """Return whether a student-name match is this row's public advisor identity."""
+    canonical_name = _normalize(row.get("canonical_name") or "")
+    return (
+        path.name in PUBLIC_IDENTITY_FILES
+        and column in CANONICAL_IDENTITY_COLUMNS
+        and bool(canonical_name)
+        and identifier in canonical_name
+    )
+
+
 def audit_public_data(public_dir: Path, curated_dir: Path) -> list[str]:
     """Return findings where public CSV strings contain original student data.
 
-    Name-only matches in public advisor/lecturer identity and publication evidence
-    files are ambiguous, so only original student IDs are reported there.
+    Name-only matches are exempt only when they match that row's canonical public
+    advisor identity. Original student IDs are always reported.
     """
     identifiers = _student_identifiers(curated_dir)
     findings: list[str] = []
@@ -43,7 +57,9 @@ def audit_public_data(public_dir: Path, curated_dir: Path) -> list[str]:
                 for column, value in row.items():
                     normalized = _normalize(value or "")
                     for identifier, label in identifiers.items():
-                        if label.startswith("student_name=") and path.name in PUBLIC_IDENTITY_FILES:
+                        if label.startswith("student_name=") and _is_canonical_identity_collision(
+                            path, column, row, identifier
+                        ):
                             continue
                         if identifier and identifier in normalized:
                             findings.append(f"{path.name}:{line_number}:{column} contains {label}")

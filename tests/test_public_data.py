@@ -26,12 +26,20 @@ def _privacy_fixture(tmp_path: Path) -> tuple[Path, Path]:
     _write_csv(
         curated_dir / "theses.csv",
         ["student_id", "student_name"],
-        [{"student_id": "11230001", "student_name": "Nguyễn Văn A"}],
+        [
+            {"student_id": "11230001", "student_name": "Nguyễn Văn A"},
+            {"student_id": "11230002", "student_name": "Trần Thị B"},
+        ],
     )
     _write_csv(
         public_dir / "advisors.csv",
-        ["advisor_id", "canonical_name"],
-        [{"advisor_id": "nguyen-van-a", "canonical_name": "Nguyễn Văn A"}],
+        ["advisor_id", "canonical_name", "name", "profile_url"],
+        [{
+            "advisor_id": "11230002",
+            "canonical_name": "Nguyễn Văn A",
+            "name": "Advisor display name",
+            "profile_url": "https://example.com/Nguyen-Van-A-and-Tran-Thi-B",
+        }],
     )
     _write_csv(
         public_dir / "courses.csv",
@@ -66,10 +74,27 @@ def test_sanitize_theses_uses_fallback_provenance_for_blank_record_id():
     assert sanitized[0]["source_file"] == "source-thesis-0001.pdf"
 
 
+def test_sanitize_public_evidence_redacts_original_student_names():
+    assert public_builder.sanitize_public_evidence(
+        '{"text": "Nguyễn Văn A and Trần Thị B"}',
+        ["Nguyễn Văn A", "Trần Thị B"],
+    ) == '{"text": "[redacted student] and [redacted student]"}'
+
+
+def test_sanitize_public_evidence_redacts_unaccented_student_names():
+    assert public_builder.sanitize_public_evidence(
+        '{"text": "Pham Minh Quan"}',
+        ["Phạm Minh Quân"],
+    ) == '{"text": "[redacted student]"}'
+
+
 def test_public_audit_detects_non_thesis_leak_without_flagging_identity_collision(tmp_path):
     public_dir, curated_dir = _privacy_fixture(tmp_path)
 
     assert audit_public_data(public_dir, curated_dir) == [
+        "advisors.csv:2:advisor_id contains student_id=11230002",
+        "advisors.csv:2:profile_url contains student_name=Nguyễn Văn A",
+        "advisors.csv:2:profile_url contains student_name=Trần Thị B",
         "courses.csv:2:provenance contains student_id=11230001",
         "courses.csv:2:provenance contains student_name=Nguyễn Văn A",
     ]
