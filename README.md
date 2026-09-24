@@ -1,120 +1,98 @@
-﻿# Hệ thống RL Phân bổ Sinh viên – Giảng viên Hướng dẫn
+# Hệ thống RL Phân bổ Sinh viên – Giảng viên Hướng dẫn
 
-> Reinforcement Learning-Based Student–Advisor Matching System
+> **Production repository — Reinforcement Learning-Based Student–Advisor Matching System**  
+> **Sinh viên:** Hoàng Văn Nam — 11236160  
 
-## Giới thiệu
+Repository này là sản phẩm hoàn chỉnh được version-control và push lên GitHub. Planning/spec/task orchestration được quản lý ở workspace local bên ngoài repo; repository này chỉ chứa mã nguồn, kiểm thử, tài liệu kỹ thuật, artifact có thể công bố và hạ tầng vận hành.
 
-Dự án nghiên cứu hệ thống hỗ trợ phân bổ sinh viên thực hiện khóa luận tốt nghiệp cho giảng viên hướng dẫn. Hệ thống kết hợp biểu diễn ngôn ngữ tự nhiên của đề tài và hồ sơ chuyên môn giảng viên với Reinforcement Learning để tối ưu phân bổ trên toàn cohort.
+## Kiến trúc repository
 
-Mục tiêu không chỉ là chọn giảng viên có độ tương thích cao cho từng sinh viên độc lập, mà còn cân bằng workload, tuân thủ quota và tạo nền tảng để cải thiện policy khi có thêm dữ liệu feedback ở các cohort tiếp theo.
+```txt
+src/              # Data pipeline, matching environment, RL agents, benchmark
+backend/          # FastAPI, SQLAlchemy, API/service/repository layers
+frontend/         # React + TypeScript + Vite + TailwindCSS
+configs/          # Centralized ML/data configuration
+data/              # raw, processed, curated, public, storage
+outputs/           # result JSON, models/checkpoints, publication figures
+tests/             # Python unit and integration tests
+eval/              # Evaluation runner and reports
+docs/              # Technical docs, architecture and runbooks
+baocao/            # Thesis deliverables
+presentation/      # Defense/demo deliverables
+scripts/           # Reproducible maintenance and experiment scripts
+.github/workflows/ # CI pipeline
+Dockerfile         # Multi-stage frontend/backend production image
+docker-compose.yml # Local container orchestration
+.env.example       # Environment contract without secrets
+```
 
-## Mục tiêu nghiên cứu
+## Công nghệ
 
-- Xây dựng dữ liệu khóa luận và hồ sơ giảng viên có thể tái lập, có kiểm tra chất lượng.
-- Tính compatibility giữa thesis và advisor từ nội dung đề tài, lĩnh vực và kỹ năng chuyên môn.
-- Mô hình hóa bài toán phân bổ tuần tự với quota là hard constraint.
-- Sử dụng PPO có action masking là mô hình chính; DQN là mô hình đối chứng.
-- So sánh khách quan với Random, Greedy Similarity, Gale–Shapley và Student–Project Allocation khi các baseline tương ứng hoàn thiện.
-- Đánh giá bằng compatibility, fairness, quota violations, historical matching accuracy và outcome/feedback khi dữ liệu này sẵn sàng.
+| Layer | Technology |
+|---|---|
+| ML/RL | Python, Gymnasium, Stable-Baselines3, SB3-Contrib, scikit-learn |
+| API | FastAPI, Uvicorn, Pydantic Settings |
+| Database | SQLAlchemy; SQLite local mặc định; PostgreSQL qua `DATABASE_URL`; MongoDB tùy chọn |
+| Frontend | React 18, TypeScript, Vite, TailwindCSS, Recharts, React Query |
+| Test | Pytest, Vitest, Testing Library |
+| Delivery | Docker, Docker Compose, GitHub Actions, Render |
 
-## Thành phần hệ thống
+## Khởi chạy local
 
-### Dữ liệu và preprocessing
+### Backend + built frontend
 
-Dự án thu thập thông tin từ các khóa luận PDF/DOCX, khảo sát và hồ sơ công khai của giảng viên. Pipeline tạo dữ liệu trích xuất, profile kỹ năng theo giảng viên và dataset đã làm sạch dành riêng cho thí nghiệm RL.
+```powershell
+Copy-Item .env.example .env
+python -m pip install -r requirements.txt
+npm --prefix frontend ci
+npm --prefix frontend run build
+python run_dashboard.py
+```
 
-Nguồn dữ liệu raw được tách biệt khỏi dữ liệu processed. Bước cleaning là deterministic, chỉ ghi kết quả mới vào thư mục dữ liệu sạch và không ghi đè dữ liệu nguồn.
+- Dashboard: `http://127.0.0.1:8000`
+- Swagger: `http://127.0.0.1:8000/docs`
+- Health: `http://127.0.0.1:8000/health`
 
-### Compatibility
+### Chế độ phát triển tách frontend/backend
 
-Phiên bản hiện tại sử dụng TF-IDF với cosine similarity trên title, field, công nghệ của thesis và các trường chuyên môn của advisor. Vocabulary được fit trên tập train, còn tập hold-out chỉ được transform để hạn chế data leakage.
+```powershell
+# Terminal 1
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 
-### Matching environment
+# Terminal 2
+npm --prefix frontend run dev
+```
 
-Mỗi episode xử lý lần lượt các sinh viên trong một cohort. Mỗi action là chọn một advisor. State bao gồm compatibility của sinh viên hiện tại, capacity còn lại và workload hiện tại của tất cả advisor.
+### Docker
 
-Quota được coi là ràng buộc cứng. PPO dùng action masking để không chọn advisor đã đầy quota. DQN được giữ làm đối chứng; số action không hợp lệ mà DQN đề xuất được đo và báo cáo riêng.
+```powershell
+docker compose up --build
+```
 
-### Reward
+## Kiểm thử
 
-Reward v1 kết hợp compatibility và phần thưởng cân bằng tải. Assignment không hợp lệ bị phạt. Khi có dữ liệu preference, grade hoặc feedback đủ tin cậy, reward sẽ được mở rộng bằng các thành phần này với trọng số được version hóa.
+```powershell
+python -m pytest tests
+npm --prefix frontend run test:run
+npm --prefix frontend run build
+docker build -t kltn-matching:local .
+```
 
-## Trạng thái triển khai
+## Git remote
 
-Đã hoàn thành các phần sau:
+Git root là chính thư mục này. Luôn chạy Git tại repo hiện hành:
 
-- Pipeline trích xuất và tổng hợp dữ liệu khóa luận.
-- Crawler và profile kỹ năng giảng viên.
-- Cleaning dataset tái lập được cho thí nghiệm RL.
-- TF-IDF cosine compatibility matrix.
-- Sequential matching environment với quota và fairness reward.
-- PPO có action masking, DQN đối chứng, Random và Greedy Similarity.
-- Benchmark hold-out theo năm, có fallback deterministic khi không thể tách cohort theo năm.
+```powershell
+git status --short
+git remote -v
+```
 
-Các phần tiếp theo gồm Gale–Shapley, Student–Project Allocation, preference modeling, outcome feedback, model registry và lớp ứng dụng phục vụ inference.
+Không commit `.env`, raw/private data, PII, log hoặc checkpoint lớn.
 
-## Pipeline dữ liệu curated
+## Bài toán và tiêu chí an toàn
 
-Không dùng trực tiếp các CSV lịch sử trong `data/processed/` để train. Quy trình mới giữ nguyên raw data và xuất bộ dữ liệu có provenance vào `data/curated/`:
+Mỗi episode xử lý tuần tự một cohort sinh viên. State kết hợp compatibility, remaining capacity và current load; action chọn một advisor; Action Masking loại bỏ advisor đã đầy quota. Candidate RL chỉ được promote khi quota violations và invalid proposals bằng 0 và đạt promotion gate trên hold-out đa seed.
 
-1. Crawl roster 36 giảng viên từ trang giảng viên FIT NEU và làm mới từng profile.
-2. Crawl học phần từ 5 chương trình đào tạo chính của Khoa.
-3. Chuẩn hoá tên giảng viên bằng khóa tên không dấu, bỏ học hàm/học vị và đối chiếu roster chính thức. Ví dụ `TS. Lưu Minh Tuấn` và `Lưu Minh Tuấn` cùng ánh xạ tới một `advisor_id` và tên chuẩn `TS Lưu Minh Tuấn`.
-4. Gán role kỹ thuật cho sinh viên từ tiêu đề, lĩnh vực, framework, công cụ và phương pháp trong bài làm.
-5. Chấm skill giảng viên theo từng bằng chứng. Bài báo/công trình nghiên cứu có trọng số cao và time-decay; môn giảng dạy, lĩnh vực nghiên cứu và đề tài từng hướng dẫn là các nguồn độc lập.
+## Dữ liệu và đạo đức
 
-Quá trình huấn luyện PPO được tổ chức theo các mốc tích lũy 200 nghìn, 500 nghìn và 1 triệu bước. Mô hình tiếp tục học từ checkpoint trước thay vì khởi tạo lại ở mỗi mốc, nhờ đó có thể theo dõi quá trình hội tụ và so sánh chất lượng chính sách theo thời gian huấn luyện.
-
-Các output chính:
-
-- `lecturers.csv`: roster chuẩn, một dòng mỗi giảng viên.
-- `courses.csv`: học phần, mã học phần, tín chỉ và chương trình đào tạo.
-- `theses.csv`: bài làm hợp lệ đã chuẩn hoá advisor và gán role.
-- `student_profiles.csv`: role chính/phụ của sinh viên.
-- `advisor_skill_evidence.csv`: điểm skill kèm evidence JSON và số bài báo hỗ trợ.
-- `advisor_identity_map.csv`: audit mọi tên gốc sang tên chuẩn.
-- `quality_report.json`: số dòng, coverage, fuzzy match và phân phối role.
-
-## Đánh giá thực nghiệm
-
-Protocol hiện tại đưa toàn bộ khóa luận trước năm 2025 và 75% khóa luận năm 2025 vào tập train. Phần dữ liệu năm 2025 còn lại được chia gần đều cho validation và test. Việc chia tập được thực hiện ổn định theo định danh sinh viên để các bản nộp trùng của cùng một sinh viên không xuất hiện ở nhiều tập. Vocabulary TF-IDF chỉ được fit trên train; validation phục vụ so sánh các milestone, còn test chỉ được sử dụng cho lần đánh giá cuối cùng.
-
-Các metric gồm mean compatibility, load variance, quota violations, historical top-1 accuracy và invalid proposals. Historical top-1 accuracy chỉ phản ánh mức độ tái tạo assignment lịch sử; không được coi là ground truth của phân bổ tối ưu.
-
-Kết quả smoke test chỉ chứng minh pipeline hoạt động. Kết luận học thuật yêu cầu nhiều seed, số timesteps đủ lớn, baseline đầy đủ và dữ liệu train có quy mô phù hợp.
-
-## Tài liệu liên quan
-
-- `agent.md`: quy tắc làm việc, vị trí dữ liệu và hướng dẫn vận hành cho các lần phát triển tiếp theo.
-- `docs/rl_algorithm_design.md`: state, action, reward, masking, protocol benchmark và các giới hạn hiện tại.
-- `requirements.txt`: dependency của pipeline, NLP và RL.
-- `configs/settings.py`: cấu hình đường dẫn, schema và biến môi trường.
-
-## Hệ thống Quyết định & Giao diện Trực quan hóa (Interactive Dashboard)
-
-Hệ thống cung cấp giao diện web SPA toàn diện kết hợp cùng FastAPI backend để hỗ trợ hội đồng ra quyết định phân bổ thời gian thực:
-
-- **Khởi chạy hệ thống**:
-  ```bash
-  python run_dashboard.py
-  # Hoặc: uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
-  ```
-  - **Dashboard Web**: `http://localhost:8000`
-  - **Swagger API Docs**: `http://localhost:8000/docs`
-
-- **Tính năng chính trên Dashboard**:
-  1. **Phân bổ đoàn khóa luận (Cohort Allocation)**: Lựa chọn tập cohort (Validation, Test, Train) và đối sánh 5 giải thuật thời gian thực (`Exact Hungarian`, `Maskable PPO`, `Gale-Shapley SPA`, `Greedy`, `Random`), hiển thị biểu đồ phân bổ tải hạn mức (workload quota gauge) và danh sách ghép cặp chi tiết.
-  2. **Tư vấn đề tài đơn lẻ (Single Recommendation)**: Tìm kiếm giảng viên phù hợp dựa trên biểu diễn vector cosine similarity và hạn mức khả dụng.
-  3. **Đối sánh đa chiều & Động học RL (Benchmarks & Convergence)**: Trực quan hóa đường cong học tập tại 500k, 1M, 2M steps và biểu đồ radar đa mục tiêu.
-  4. **Kho lưu trữ sơ đồ công bố (Publication Figures Gallery)**: Xem và phóng to 5 đồ thị chuẩn IEEE/ACM độ phân giải 300 DPI (`outputs/figures/`):
-     - `figure1_ppo_learning_curves.png`: Động học hội tụ Maskable PPO.
-     - `figure2_constraint_violations.png`: Hiệu quả của Action Masking trong việc triệt tiêu vi phạm quota.
-     - `figure3_algorithm_comparison.png`: Đối sánh toàn diện 8 thuật toán.
-     - `figure4_system_architecture.png`: Sơ đồ kiến trúc luồng dữ liệu toàn hệ thống.
-     - `figure5_rl_mdp_flow.png`: Quy trình ra quyết định Markov (MDP) tuần tự.
-  5. **Danh mục giảng viên (Faculty Directory)**: Danh bạ 39 giảng viên kèm hạn mức hướng dẫn, chuyên ngành và từ khóa kỹ năng.
-
-
-## Lưu ý dữ liệu và đạo đức
-
-Dữ liệu sinh viên và giảng viên cần được sử dụng theo đúng phạm vi được cho phép. Hệ thống là công cụ hỗ trợ ra quyết định; kết quả matching cần được admin hoặc hội đồng chuyên môn kiểm tra trước khi áp dụng chính thức.
+Raw/private data phải giữ local. Chỉ public snapshot đã ẩn danh và artifact tái lập được mới được commit. Kết quả matching là hỗ trợ quyết định và phải được hội đồng chuyên môn duyệt trước khi áp dụng.

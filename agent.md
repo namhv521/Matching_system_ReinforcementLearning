@@ -1,41 +1,46 @@
-# Agent guide — Student–Advisor Reinforcement Learning
+# Product Repository Agent Guide
+
+## Repository boundary
+
+File này áp dụng khi làm việc trực tiếp trong Git repository sản phẩm. Git root là thư mục chứa file này; không giả định tồn tại planning workspace bên ngoài khi repo được clone từ GitHub.
 
 ## Mục tiêu
-Xây dựng hệ thống phân bổ sinh viên–giảng viên hướng dẫn khóa luận bằng PPO (mô hình chính), DQN (đối chứng), và các baseline truyền thống.
+
+Phát triển hệ thống phân bổ sinh viên–giảng viên gồm data pipeline, Gymnasium environment, các RL/baseline engines, FastAPI backend, React dashboard, database adapters, tests và deployment configuration.
 
 ## Quy tắc làm việc
-- Làm việc từ thư mục `C:\Su\KLTN`.
-- Không ghi đè dữ liệu raw hoặc kết quả processed đã có nếu chưa được yêu cầu.
-- Bước cleaning tái lập được phải ghi kết quả vào `data/cleaned/`.
-- Không commit `.env`, API key, model checkpoint, log hoặc dữ liệu nhạy cảm.
-- Luôn kiểm tra `git status` trước và sau khi sửa. Thay đổi có sẵn của người dùng phải được giữ nguyên.
+
+- Luôn kiểm tra `git status --short` trước và sau khi sửa.
+- Giữ nguyên thay đổi có sẵn ngoài phạm vi yêu cầu.
+- Không ghi đè `data/raw` hoặc `data/processed`.
+- Dữ liệu train tái lập ghi vào `data/curated`; dữ liệu có thể công bố ghi vào `data/public` sau khi ẩn danh.
+- Không commit `.env`, API key, PII, logs hoặc checkpoint lớn.
 - Dùng UTF-8 cho CSV/JSON và hỗ trợ tiếng Việt.
+- Thay đổi hành vi phải đi kèm test và cập nhật tài liệu kỹ thuật phù hợp.
 
-## Dữ liệu
-- Input lịch sử: `data/processed/thesis_extracted.csv`.
-- Input profile: `data/processed/advisor_profiles.csv` và `advisor_skills.csv`.
-- Output cleaning: `data/cleaned/theses.csv`, `advisors.csv`, `quality_report.json`.
-- Bản ghi hợp lệ cần có `student_id`, `student_name`, `thesis_title`, `advisor_name`; chỉ nhận `extraction_status=success`.
+## Ràng buộc ML/RL
 
-## Lộ trình RL
-1. Clean và audit dữ liệu, không dùng dữ liệu lỗi làm ground truth.
-2. Tạo text representation cho thesis/advisor và compatibility matrix cosine/TF-IDF.
-3. Matching environment: mỗi bước xử lý một student; action là advisor; quota là hard constraint.
-4. Observation gồm student embedding/feature, advisor compatibility, remaining capacity và current loads.
-5. Reward: compatibility + preference − load imbalance − invalid assignment `penalty.
-6. Train PPO; train DQN trên cùng environment/protocol để đối chứng.
-7. So sánh Random, Greedy, Gale–Shapley/SPA, PPO, DQN bằng compatibility, quota violations, load variance và historical Recall@K.
-8. Lưu seed, config, metrics và checkpoint; chỉ deploy model qua evaluation gate.
+- Temporal split phải group theo `student_id`; TF-IDF chỉ fit trên Train.
+- Quota violations bắt buộc bằng 0.
+- Maskable PPO phải dùng action mask tại train và inference.
+- DQN không mask phải ghi nhận `invalid_proposals` và dùng fallback an toàn.
+- Exact Hungarian là batch production fallback nếu candidate RL không đạt promotion gate.
+- Không tuyên bố kết quả nghiên cứu nếu chưa có artifact benchmark đa seed.
 
 ## Lệnh thường dùng
+
 ```powershell
+python -m pytest tests
 python -m src.data_pipeline.clean_processed_data
 python -m src.rl.train --algorithm ppo --timesteps 10000
-python -m src.rl.train --algorithm dqn --timesteps 10000
 python -m src.rl.benchmark --timesteps 2048 --seed 42
-python -m src.data_pipeline.run_pipeline --no-crawl --limit 5
-git status --short
+npm --prefix frontend run test:run
+npm --prefix frontend run build
+python run_dashboard.py
 ```
 
-## Trạng thái hiện tại
-Phase 1 đã có pipeline PDF/DOCX và profile giảng viên. Phase 2–3 (embedding, environment, PPO/DQN) đang được triển khai từng bước.
+## Git workflow
+
+- Branch: `feature/KLTN-XXX-short-name`.
+- Commit: `KLTN-XXX: concise description`.
+- Chỉ merge khi test/build liên quan pass và diff đúng phạm vi.
